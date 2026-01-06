@@ -1,22 +1,14 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
-
-using TaskManager.Models;
-using TaskManager.Data;
-namespace TaskManager.API
+using task_manager_api.Data;
+using task_manager_api.Models;
+namespace task_manager_api.Controllers
 {
-    [Route("tasks")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class TasksController : ControllerBase
+    public class TasksController(ApplicationDbContext context) : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-
-        public TasksController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        private readonly ApplicationDbContext _context = context;
 
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -24,6 +16,16 @@ namespace TaskManager.API
             
             var tasks = await _context.Tasks.ToListAsync();
             return Ok(tasks);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var task = await _context.Tasks.FindAsync(id);
+
+            if (task == null) return NotFound();
+
+            return Ok(task);
         }
 
         [HttpPost]

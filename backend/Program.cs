@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using TaskManager.Data;
+using task_manager_api.Data;
 
 DotNetEnv.Env.Load();
 
