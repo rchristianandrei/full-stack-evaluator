@@ -20,3 +20,15 @@ public record CreateTaskItemDto
     [Range(1, int.MaxValue)]
     int UserId
 );
+
+public record UpdateTaskItemDto
+(
+    [Required]
+    [MinLength(1)]
+    string Title,
+
+    [Range(1, int.MaxValue)]
+    int UserId,
+
+    bool IsDone
+);

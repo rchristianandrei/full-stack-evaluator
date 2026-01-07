@@ -47,16 +47,20 @@ namespace task_manager_api.Controllers
         }
 
         [HttpPut("{id}")] 
-        public async Task<IActionResult> Update(int id, [FromBody] TaskItem updated)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateTaskItemDto updated)
         {
             var task = await _context.Tasks.FindAsync(id);
             if (task == null) return NotFound();
 
+            var user = await _context.Users.FindAsync(updated.UserId);
+            if (user == null) return NotFound();
+
             task.Title = updated.Title;
             task.IsDone = updated.IsDone;
+            task.UserId = updated.UserId;
             await _context.SaveChangesAsync();
 
-            return Ok(task);
+            return Ok(task.ToDto());
         }
 
         [HttpDelete("{id}")]
