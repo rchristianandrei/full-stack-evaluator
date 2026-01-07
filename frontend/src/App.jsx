@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import Tasks from "./Tasks";
+import Users from "./Users";
 
 function App() {
   const [currentTab, setCurrentTab] = useState("tasks");
@@ -34,6 +35,7 @@ function App() {
         </ul>
       </nav>
       {currentTab === "tasks" && <Tasks className="flex-1" />}
+      {currentTab === "users" && <Users className="flex-1" />}
     </div>
   );
 }
