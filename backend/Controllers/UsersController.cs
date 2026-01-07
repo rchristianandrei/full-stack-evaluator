@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 using task_manager_api.DTOs;
 using task_manager_api.Interfaces;
 using task_manager_api.Mapper;
@@ -32,6 +33,12 @@ namespace task_manager_api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateUserDto dto)
         {
+            string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+            if(!Regex.IsMatch(dto.Email, pattern, RegexOptions.IgnoreCase))
+            {
+                return BadRequest(new { message = "Invalid email format" });
+            }
+
             var existingUser = await _userRepo.GetByEmail(dto.Email);
             if (existingUser != null) return Conflict(new {message = "email already in use"});
 
