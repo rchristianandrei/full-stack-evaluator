@@ -13,7 +13,7 @@ function AddTask(props) {
   useEffect(() => {
     const controller = new AbortController();
 
-    userRepo.getAllUsers(controller)
+    userRepo.getAll(controller)
       .then((res) => setUsers(res.data))
       .catch((err) => {
         if (err.name !== "CanceledError") {

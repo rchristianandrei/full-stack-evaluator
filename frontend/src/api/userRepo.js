@@ -1,6 +1,6 @@
 import api from "./axios";
 
-function getAllUsers(controller) {
+function getAll(controller) {
   return api.get(
     "/users",
     controller
@@ -11,4 +11,8 @@ function getAllUsers(controller) {
   );
 }
 
-export default { getAllUsers };
+function deleteById(userId) {
+  return api.delete(`/users/${userId}`);
+}
+
+export default { getAll, deleteById };

@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import taskRepo from "./api/taskRepo";
 import AddTask from "./components/AddTask";
+import userRepo from "./api/userRepo";
 
 function Users(props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [tasks, setTasks] = useState([]);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const controller = new AbortController();
 
-    taskRepo
-      .getAllTasks(controller)
-      .then((res) => setTasks(res.data))
+    userRepo
+      .getAll(controller)
+      .then((res) => setUsers(res.data))
       .catch((err) => {
         if (err.name !== "CanceledError") {
           console.error(err);
@@ -23,37 +23,18 @@ function Users(props) {
     };
   }, []);
 
-  function OnMarkAsDone(taskId) {
+  function OnDelete(userId) {
     const confirm = window.confirm(
-      `Are you sure you want to mark task Id: ${taskId} as done?`
+      `Are you sure you want to delete task Id: ${userId}?`
     );
 
     if (!confirm) return;
 
-    taskRepo
-      .setToDone(taskId, true)
+    userRepo
+      .deleteById(userId)
       .then(() => {
-        taskRepo
-          .getAllTasks()
-          .then((res) => setTasks(res.data))
-          .catch((err) => console.error(err));
-      })
-      .catch((err) => console.log(err));
-  }
-
-  function OnDelete(taskId) {
-    const confirm = window.confirm(
-      `Are you sure you want to delete task Id: ${taskId}?`
-    );
-
-    if (!confirm) return;
-
-    taskRepo
-      .deleteById(taskId)
-      .then(() => {
-        taskRepo
-          .getAllTasks()
-          .then((res) => setTasks(res.data))
+        userRepo.getAll()
+          .then((res) => setUsers(res.data))
           .catch((err) => console.error(err));
       })
       .catch((err) => console.log(err));
@@ -66,7 +47,7 @@ function Users(props) {
 
     taskRepo
       .getAllTasks()
-      .then((res) => setTasks(res.data))
+      .then((res) => setUsers(res.data))
       .catch((err) => console.error(err));
   }
 
@@ -87,12 +68,12 @@ function Users(props) {
             <div className="text-start">Email</div>
             <div>Actions</div>
           </div>
-          {tasks.map((task) => (
-            <li className="grid grid-cols-[1fr_100px]" key={task.id}>
-              <div className="text-start">{task.user.email} </div>
+          {users.map((user) => (
+            <li className="grid grid-cols-[1fr_100px]" key={user.id}>
+              <div className="text-start">{user.email} </div>
               <button
                 className="border bg-red-500"
-                onClick={() => OnDelete(task.id)}
+                onClick={() => OnDelete(user.id)}
               >
                 Delete
               </button>
