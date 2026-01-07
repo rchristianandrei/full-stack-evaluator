@@ -73,7 +73,7 @@ function Tasks(props) {
   return (
     <>
       <div className={`${props.className} flex flex-col gap-2`}>
-        <div className="flex items-center justify-around">
+        <div className="flex items-center justify-between w-full max-w-150 mx-auto">
           <h2 className="text-2xl">Tasks</h2>
           <button
             className="border bg-white text-black"
@@ -82,39 +82,37 @@ function Tasks(props) {
             Add
           </button>
         </div>
-        <div className="flex-1 flex justify-center">
-          <ul className="flex-1 max-w-150 flex flex-col gap-2 px-4">
-            <div className="grid grid-cols-4 *:text-xl">
-              <div>Title</div>
-              <div>User</div>
-              <div>Status</div>
-              <div>Actions</div>
-            </div>
-            {tasks.map((task) => (
-              <li className="grid grid-cols-4" key={task.id}>
-                <div>{task.title}</div>
-                <div>{task.user.email} </div>
-                <div>{task.isDone ? "✅" : "❌"}</div>
-                <div className="flex gap-1 justify-end">
-                  {!task.isDone && (
-                    <button
-                      className="border border-white bg-green-700"
-                      onClick={() => OnMarkAsDone(task.id)}
-                    >
-                      Done
-                    </button>
-                  )}
+        <ul className="flex-1 w-full max-w-150 mx-auto flex flex-col gap-2 px-4 border overflow-y-auto">
+          <div className="grid grid-cols-4 *:text-xl">
+            <div>Title</div>
+            <div>User</div>
+            <div>Status</div>
+            <div>Actions</div>
+          </div>
+          {tasks.map((task) => (
+            <li className="grid grid-cols-4" key={task.id}>
+              <div>{task.title}</div>
+              <div>{task.user.email} </div>
+              <div>{task.isDone ? "✅" : "❌"}</div>
+              <div className="flex gap-1 justify-end">
+                {!task.isDone && (
                   <button
-                    className="border bg-red-500"
-                    onClick={() => OnDelete(task.id)}
+                    className="border border-white bg-green-700"
+                    onClick={() => OnMarkAsDone(task.id)}
                   >
-                    Delete
+                    Done
                   </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+                )}
+                <button
+                  className="border bg-red-500"
+                  onClick={() => OnDelete(task.id)}
+                >
+                  Delete
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
       {isOpen && <AddTask onClose={OnPopupClose}></AddTask>}
     </>

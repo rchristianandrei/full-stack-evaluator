@@ -49,7 +49,7 @@ function AddTask(props) {
       <div className="absolute inset-0 bg-black/50" onClick={() => props.onClose(false)} />
 
       {/* Modal Box */}
-      <div className="relative z-10 w-full max-w-md rounded-lg border p-6 shadow-lg">
+      <div className="relative z-10 w-full max-w-md rounded-lg border p-6 shadow-lg bg-black">
         <button
           onClick={() => props.onClose(false)}
           className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
