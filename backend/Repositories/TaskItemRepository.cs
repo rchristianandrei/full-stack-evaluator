@@ -9,7 +9,7 @@ public class TaskItemRepository(ApplicationDbContext context) : BaseRepository<T
 {
     public override async Task<IEnumerable<TaskItem>> GetAll()
     {
-        return await dbSet.OrderBy(t => t.Id).ToListAsync();
+        return await dbSet.Include(t => t.User).OrderBy(t => t.Id).ToListAsync();
     }
 
     public async Task<TaskItem?> GetByIdIncludeAll(int id)

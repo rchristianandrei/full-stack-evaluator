@@ -16,7 +16,7 @@ namespace task_manager_api.Controllers
         public async Task<IActionResult> Get()
         {
             var tasks = await _taskItemRepo.GetAll();
-            return Ok(tasks.Select(t => t.ToDto()));
+            return Ok(tasks.Select(t => t.ToDtoIncludeAll()));
         }
 
         [HttpGet("{id}")]
