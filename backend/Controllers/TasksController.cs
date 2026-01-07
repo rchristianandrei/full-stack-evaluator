@@ -1,29 +1,28 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using task_manager_api.Data;
 using task_manager_api.DTOs;
+using task_manager_api.Interfaces;
 using task_manager_api.Mapper;
 using task_manager_api.Models;
 namespace task_manager_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TasksController(ApplicationDbContext context) : ControllerBase
+    public class TasksController(ITaskItemRepository taskItemRepo, IUserRepository userRepo) : ControllerBase
     {
-        private readonly ApplicationDbContext _context = context;
+        private readonly ITaskItemRepository _taskItemRepo = taskItemRepo;
+        private readonly IUserRepository _userRepo = userRepo;
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            
-            var tasks = await _context.Tasks.ToListAsync();
+            var tasks = await _taskItemRepo.GetAll();
             return Ok(tasks.Select(t => t.ToDto()));
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var task = await _context.Tasks.Include(t => t.User).FirstOrDefaultAsync(t => t.Id == id);
+            var task = await _taskItemRepo.GetByIdIncludeAll(id);
 
             if (task == null) return NotFound();
 
@@ -33,7 +32,7 @@ namespace task_manager_api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateTaskItemDto dto)
         {
-            var user = await _context.Users.FindAsync(dto.UserId);
+            var user = await _userRepo.GetById(dto.UserId);
             if (user == null) return NotFound();
 
             var task = new TaskItem
@@ -41,24 +40,26 @@ namespace task_manager_api.Controllers
                 Title = dto.Title,
                 UserId = dto.UserId,
             };
-            _context.Tasks.Add(task);
-            await _context.SaveChangesAsync();
+
+            await _taskItemRepo.Add(task);
+
             return CreatedAtAction(nameof(Get), new { id = task.Id }, task.ToDto());
         }
 
         [HttpPut("{id}")] 
         public async Task<IActionResult> Update(int id, [FromBody] UpdateTaskItemDto updated)
         {
-            var task = await _context.Tasks.FindAsync(id);
+            var task = await _taskItemRepo.GetById(id);
             if (task == null) return NotFound();
 
-            var user = await _context.Users.FindAsync(updated.UserId);
+            var user = await _userRepo.GetById(updated.UserId);
             if (user == null) return NotFound();
 
             task.Title = updated.Title;
             task.IsDone = updated.IsDone;
             task.UserId = updated.UserId;
-            await _context.SaveChangesAsync();
+
+            await _taskItemRepo.SaveChanges();
 
             return Ok(task.ToDto());
         }
@@ -66,11 +67,10 @@ namespace task_manager_api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var task = await _context.Tasks.FindAsync(id);
+            var task = await _taskItemRepo.GetById(id);
             if (task == null) return NotFound();
 
-            _context.Tasks.Remove(task);
-            await _context.SaveChangesAsync();
+            await _taskItemRepo.Remove(task);
 
             return NoContent();
         }

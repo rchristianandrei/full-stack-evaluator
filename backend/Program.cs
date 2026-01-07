@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IHashPasswordService, HashPasswordService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
