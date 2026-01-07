@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import taskRepo from "./api/taskRepo";
-import AddTask from "./components/AddTask";
+import AddTask from "./components/modals/AddTask";
+import { TableHeader } from "./components/table/TableHeader";
+import { TableEntry } from "./components/table/TableEntry";
+import { Table } from "./components/table/Table";
+import { Heading } from "./components/Heading";
+import { Container } from "./components/Container";
+import { DeleteButton } from "./components/buttons/DeleteButton";
+import { PrimaryButton } from "./components/buttons/PrimaryButton";
 
 function Tasks(props) {
   const [isOpen, setIsOpen] = useState(false);
@@ -72,25 +79,22 @@ function Tasks(props) {
 
   return (
     <>
-      <div className={`${props.className} flex flex-col gap-2`}>
-        <div className="flex items-center justify-between w-full max-w-150 mx-auto">
+      <Container className={props.className}>
+        <Heading>
           <h2 className="text-2xl">Tasks</h2>
-          <button
-            className="border bg-white text-black"
-            onClick={() => setIsOpen(true)}
-          >
+          <PrimaryButton onClick={() => setIsOpen(true)}>
             Add
-          </button>
-        </div>
-        <ul className="flex-1 w-full max-w-150 mx-auto flex flex-col gap-2 px-4 border overflow-y-auto">
-          <div className="grid grid-cols-4 *:text-xl">
+          </PrimaryButton>
+        </Heading>
+        <Table>
+          <TableHeader className="grid-cols-4">
             <div>Title</div>
             <div>User</div>
             <div>Status</div>
             <div>Actions</div>
-          </div>
+          </TableHeader>
           {tasks.map((task) => (
-            <li className="grid grid-cols-4" key={task.id}>
+            <TableEntry className="grid-cols-4" key={task.id}>
               <div>{task.title}</div>
               <div>{task.user.email} </div>
               <div>{task.isDone ? "✅" : "❌"}</div>
@@ -103,17 +107,14 @@ function Tasks(props) {
                     Done
                   </button>
                 )}
-                <button
-                  className="border bg-red-500"
-                  onClick={() => OnDelete(task.id)}
-                >
+                <DeleteButton onClick={() => OnDelete(task.id)}>
                   Delete
-                </button>
+                </DeleteButton>
               </div>
-            </li>
+            </TableEntry>
           ))}
-        </ul>
-      </div>
+        </Table>
+      </Container>
       {isOpen && <AddTask onClose={OnPopupClose}></AddTask>}
     </>
   );

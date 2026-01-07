@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import userRepo from "../api/userRepo";
+import userRepo from "../../api/userRepo";
 
 function AddUser(props) {
   const [formData, setFormData] = useState({

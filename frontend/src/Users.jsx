@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
-import AddUser from "./components/AddUser";
+import AddUser from "./components/modals/AddUser";
 import userRepo from "./api/userRepo";
+import { TableHeader } from "./components/table/TableHeader";
+import { TableEntry } from "./components/table/TableEntry";
+import { Table } from "./components/table/Table";
+import { Heading } from "./components/Heading";
+import { Container } from "./components/Container";
+import { DeleteButton } from "./components/buttons/DeleteButton";
+import { PrimaryButton } from "./components/buttons/PrimaryButton";
 
 function Users(props) {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,7 +40,8 @@ function Users(props) {
     userRepo
       .deleteById(userId)
       .then(() => {
-        userRepo.getAll()
+        userRepo
+          .getAll()
           .then((res) => setUsers(res.data))
           .catch((err) => console.error(err));
       })
@@ -53,34 +61,28 @@ function Users(props) {
 
   return (
     <>
-      <div className={`${props.className} flex flex-col gap-2`}>
-        <div className="flex items-center justify-between w-full max-w-150 mx-auto">
+      <Container className={props.className}>
+        <Heading>
           <h2 className="text-2xl">Users</h2>
-          <button
-            className="border bg-white text-black"
-            onClick={() => setIsOpen(true)}
-          >
+          <PrimaryButton onClick={() => setIsOpen(true)}>
             Add
-          </button>
-        </div>
-        <ul className="flex-1 w-full max-w-150 mx-auto flex flex-col gap-2 px-4 border overflow-y-auto">
-          <div className="grid grid-cols-[1fr_100px] *:text-xl">
+          </PrimaryButton>
+        </Heading>
+        <Table>
+          <TableHeader className="grid-cols-[1fr_100px]">
             <div className="text-start">Email</div>
             <div>Actions</div>
-          </div>
+          </TableHeader>
           {users.map((user) => (
-            <li className="grid grid-cols-[1fr_100px]" key={user.id}>
+            <TableEntry className="grid-cols-[1fr_100px]" key={user.id}>
               <div className="text-start">{user.email} </div>
-              <button
-                className="border bg-red-500"
-                onClick={() => OnDelete(user.id)}
-              >
+              <DeleteButton onClick={() => OnDelete(user.id)}>
                 Delete
-              </button>
-            </li>
+              </DeleteButton>
+            </TableEntry>
           ))}
-        </ul>
-      </div>
+        </Table>
+      </Container>
       {isOpen && <AddUser onClose={OnPopupClose}></AddUser>}
     </>
   );

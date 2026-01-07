@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import taskRepo from "../api/taskRepo";
-import userRepo from "../api/userRepo";
+import taskRepo from "../../api/taskRepo";
+import userRepo from "../../api/userRepo";
 
 function AddTask(props) {
   const [formData, setFormData] = useState({
