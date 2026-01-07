@@ -5,6 +5,12 @@ function Tasks() {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
+    api.get('tasks').then(res => res.json())
+    .then(data => setTasks(data))
+    .catch(err => console.log())
+  }, []);
+
+  useEffect(() => {
     api.get('/tasks')
       .then(res => setTasks(res.data))
       .catch(err => console.error(err));
