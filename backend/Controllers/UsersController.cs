@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using task_manager_api.Data;
 using task_manager_api.DTOs;
 using task_manager_api.Interfaces;
+using task_manager_api.Mapper;
 using task_manager_api.Models;
 
 namespace task_manager_api.Controllers
@@ -17,8 +18,8 @@ namespace task_manager_api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var tasks = await _context.Users.ToListAsync();
-            return Ok(tasks);
+            var users = await _context.Users.ToListAsync();
+            return Ok(users.Select(u => u.ToDto()));
         }
 
         [HttpGet("{id}")]
@@ -27,7 +28,7 @@ namespace task_manager_api.Controllers
             var user = await _context.Users.FindAsync(id);
             if(user == null) return NotFound();
 
-            return Ok(user);
+            return Ok(user.ToDto());
         }
 
         [HttpPost]
@@ -44,7 +45,7 @@ namespace task_manager_api.Controllers
 
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
+            return CreatedAtAction(nameof(Get), new { id = user.Id }, user.ToDto());
         }
 
         [HttpPut("{id}")]
