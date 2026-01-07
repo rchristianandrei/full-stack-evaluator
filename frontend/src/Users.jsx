@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import AddTask from "./components/AddTask";
+import AddUser from "./components/AddUser";
 import userRepo from "./api/userRepo";
 
 function Users(props) {
@@ -25,7 +25,7 @@ function Users(props) {
 
   function OnDelete(userId) {
     const confirm = window.confirm(
-      `Are you sure you want to delete task Id: ${userId}?`
+      `Are you sure you want to delete user Id: ${userId}?`
     );
 
     if (!confirm) return;
@@ -45,8 +45,8 @@ function Users(props) {
 
     if (!success) return;
 
-    taskRepo
-      .getAllTasks()
+    userRepo
+      .getAll()
       .then((res) => setUsers(res.data))
       .catch((err) => console.error(err));
   }
@@ -81,7 +81,7 @@ function Users(props) {
           ))}
         </ul>
       </div>
-      {isOpen && <AddTask onClose={OnPopupClose}></AddTask>}
+      {isOpen && <AddUser onClose={OnPopupClose}></AddUser>}
     </>
   );
 }

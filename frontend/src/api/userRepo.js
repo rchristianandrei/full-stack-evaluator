@@ -1,8 +1,10 @@
 import api from "./axios";
 
+const path = "/users"
+
 function getAll(controller) {
   return api.get(
-    "/users",
+    path,
     controller
       ? {
           signal: controller.signal,
@@ -11,8 +13,12 @@ function getAll(controller) {
   );
 }
 
-function deleteById(userId) {
-  return api.delete(`/users/${userId}`);
+function add(user) {
+  return api.post(path, user);
 }
 
-export default { getAll, deleteById };
+function deleteById(userId) {
+  return api.delete(`${path}/${userId}`);
+}
+
+export default { getAll, add, deleteById };
