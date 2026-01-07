@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
-import taskRepo from "../../api/taskRepo";
-import userRepo from "../../api/userRepo";
+import taskRepo from "../api/taskRepo";
+import userRepo from "../api/userRepo";
+import { BackDrop } from "../components/BackDrop";
+import { Modal } from "../components/modal/Modal";
+import { ModalContainer } from "../components/modal/ModalContainer";
+import { ModalCloseButton } from "../components/modal/ModalCloseButton";
+import { ModalHeader } from "../components/modal/ModalHeader";
+import { GenericInput } from "../components/inputs/GenericInput";
+import { SubmitButton } from "../components/buttons/SubmitButton";
+import { DropdownBox } from "../components/inputs/DropdownBox";
 
 function AddTask(props) {
   const [formData, setFormData] = useState({
@@ -13,7 +21,8 @@ function AddTask(props) {
   useEffect(() => {
     const controller = new AbortController();
 
-    userRepo.getAll(controller)
+    userRepo
+      .getAll(controller)
       .then((res) => setUsers(res.data))
       .catch((err) => {
         if (err.name !== "CanceledError") {
@@ -33,7 +42,8 @@ function AddTask(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    taskRepo.addTask(formData)
+    taskRepo
+      .addTask(formData)
       .then(() => {
         props.onClose(true);
       })
@@ -44,38 +54,35 @@ function AddTask(props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <ModalContainer className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/50" onClick={() => props.onClose(false)} />
+      <BackDrop onClick={() => props.onClose(false)} />
 
       {/* Modal Box */}
-      <div className="relative z-10 w-full max-w-md rounded-lg border p-6 shadow-lg bg-black">
-        <button
+      <Modal>
+        <ModalCloseButton
           onClick={() => props.onClose(false)}
-          className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-        >
-          ✕
-        </button>
+        ></ModalCloseButton>
 
-        <h2 className="mb-4 text-xl font-semibold">Create Task Form</h2>
+        <ModalHeader>Create Task Form</ModalHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
+          <GenericInput
             type="text"
             name="title"
             placeholder="Title"
             value={formData.title}
             onChange={handleChange}
             className="w-full rounded border px-3 py-2 focus:border-blue-500 focus:outline-none"
-            required
+            required={true}
           />
 
-          <select
+          <DropdownBox
             name="userId"
             value={formData.userId}
             onChange={handleChange}
             className="w-full rounded border px-3 py-2 focus:border-blue-500 focus:outline-none *:bg-black"
-            required
+            required={true}
           >
             <option value="" disabled>
               Select a user
@@ -85,17 +92,12 @@ function AddTask(props) {
                 {user.email}
               </option>
             ))}
-          </select>
+          </DropdownBox>
 
-          <button
-            type="submit"
-            className="w-full rounded bg-blue-600 py-2 text-white hover:bg-blue-700"
-          >
-            Add
-          </button>
+          <SubmitButton>Add</SubmitButton>
         </form>
-      </div>
-    </div>
+      </Modal>
+    </ModalContainer>
   );
 }
 

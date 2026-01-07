@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import taskRepo from "./api/taskRepo";
-import AddTask from "./components/modals/AddTask";
+import AddTask from "./modals/AddTask";
 import { TableHeader } from "./components/table/TableHeader";
 import { TableEntry } from "./components/table/TableEntry";
 import { Table } from "./components/table/Table";

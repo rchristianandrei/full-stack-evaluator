@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import AddUser from "./components/modals/AddUser";
+import AddUser from "./modals/AddUser";
 import userRepo from "./api/userRepo";
 import { TableHeader } from "./components/table/TableHeader";
 import { TableEntry } from "./components/table/TableEntry";

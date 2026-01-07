@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import userRepo from "../../api/userRepo";
+import userRepo from "../api/userRepo";
+import { BackDrop } from "../components/BackDrop";
+import { Modal } from "../components/modal/Modal";
+import { ModalContainer } from "../components/modal/ModalContainer";
+import { ModalCloseButton } from "../components/modal/ModalCloseButton";
+import { ModalHeader } from "../components/modal/ModalHeader";
+import { GenericInput } from "../components/inputs/GenericInput";
+import { SubmitButton } from "../components/buttons/SubmitButton";
 
 function AddUser(props) {
   const [formData, setFormData] = useState({
@@ -7,7 +14,7 @@ function AddUser(props) {
     password: "",
   });
 
-  const [errMssg, setErrMssg] = useState("")
+  const [errMssg, setErrMssg] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,7 +23,7 @@ function AddUser(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    setErrMssg("")
+    setErrMssg("");
 
     userRepo
       .add(formData)
@@ -24,62 +31,50 @@ function AddUser(props) {
         props.onClose(true);
       })
       .catch((err) => {
-        setErrMssg(err.response.data)
+        setErrMssg(err.response.data.message);
       });
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <ModalContainer>
       {/* Overlay */}
-      <div
-        className="absolute inset-0 bg-black/50"
-        onClick={() => props.onClose(false)}
-      />
+      <BackDrop onClick={() => props.onClose(false)} />
 
       {/* Modal Box */}
-      <div className="relative z-10 w-full max-w-md rounded-lg border p-6 shadow-lg bg-black">
-        <button
+      <Modal>
+        <ModalCloseButton
           onClick={() => props.onClose(false)}
-          className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-        >
-          ✕
-        </button>
+        ></ModalCloseButton>
 
-        <h2 className="mb-4 text-xl font-semibold">Create User Form</h2>
+        <ModalHeader>Create User Form</ModalHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
+          <GenericInput
             type="email"
             name="email"
             placeholder="Email"
-            pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
             value={formData.email}
             onChange={handleChange}
             className="w-full rounded border px-3 py-2 focus:border-blue-500 focus:outline-none"
-            required
+            required={true}
           />
 
-          <input
+          <GenericInput
             type="password"
             name="password"
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
             className="w-full rounded border px-3 py-2 focus:border-blue-500 focus:outline-none"
-            required
+            required={true}
           />
 
           {errMssg && <div className="text-red-400">{errMssg}</div>}
 
-          <button
-            type="submit"
-            className="w-full rounded bg-blue-600 py-2 text-white hover:bg-blue-700"
-          >
-            Add
-          </button>
+          <SubmitButton>Add</SubmitButton>
         </form>
-      </div>
-    </div>
+      </Modal>
+    </ModalContainer>
   );
 }
 
