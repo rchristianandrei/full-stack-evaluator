@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using task_manager_api.Data;
 using task_manager_api.Interfaces;
+using task_manager_api.Repositories;
 using task_manager_api.Services;
 
 DotNetEnv.Env.Load();
@@ -8,6 +9,7 @@ DotNetEnv.Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IHashPasswordService, HashPasswordService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
