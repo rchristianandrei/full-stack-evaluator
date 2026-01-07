@@ -3,9 +3,9 @@ import Tasks from "./Tasks"
 
 function App() {
   return (
-    <div className="app">
+    <div className="app h-screen flex flex-col gap-3">
       <h1>📝 React Task Evaluator</h1>
-      <Tasks />
+      <Tasks className="flex-1" />
     </div>
   );
 }
