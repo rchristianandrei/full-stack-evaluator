@@ -48,19 +48,6 @@ namespace task_manager_api.Controllers
             return CreatedAtAction(nameof(Get), new { id = user.Id }, user.ToDto());
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] User updated)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null) return NotFound();
-
-            //user = updated.Title;
-            //user.IsDone = updated.IsDone;
-            await _context.SaveChangesAsync();
-
-            return Ok(user);
-        }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
