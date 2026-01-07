@@ -7,6 +7,8 @@ function AddUser(props) {
     password: "",
   });
 
+  const [errMssg, setErrMssg] = useState("")
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -14,11 +16,7 @@ function AddUser(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const form = e.target;
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
-    }
+    setErrMssg("")
 
     userRepo
       .add(formData)
@@ -26,8 +24,7 @@ function AddUser(props) {
         props.onClose(true);
       })
       .catch((err) => {
-        console.log(err);
-        alert("Failed to submit form.");
+        setErrMssg(err.response.data)
       });
   };
 
@@ -71,6 +68,8 @@ function AddUser(props) {
             className="w-full rounded border px-3 py-2 focus:border-blue-500 focus:outline-none"
             required
           />
+
+          {errMssg && <div className="text-red-400">{errMssg}</div>}
 
           <button
             type="submit"
