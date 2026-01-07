@@ -23,6 +23,24 @@ function Tasks(props) {
     };
   }, []);
 
+  function OnMarkAsDone(taskId) {
+    const confirm = window.confirm(
+      `Are you sure you want to mark task Id: ${taskId} as done?`
+    );
+
+    if (!confirm) return;
+
+    taskRepo
+      .setToDone(taskId, true)
+      .then(() => {
+        taskRepo
+          .getAllTasks()
+          .then((res) => setTasks(res.data))
+          .catch((err) => console.error(err));
+      })
+      .catch((err) => console.log(err));
+  }
+
   function OnDelete(taskId) {
     const confirm = window.confirm(
       `Are you sure you want to delete task Id: ${taskId}?`
@@ -44,7 +62,7 @@ function Tasks(props) {
   function OnPopupClose(success) {
     setIsOpen(false);
 
-    if(!success) return;
+    if (!success) return;
 
     taskRepo
       .getAllTasks()
@@ -64,15 +82,28 @@ function Tasks(props) {
             Add
           </button>
         </div>
-        <div className="flex justify-center">
+        <div className="flex-1 flex justify-center">
           <ul className="flex-1 max-w-150 flex flex-col gap-2 px-4">
+            <div className="grid grid-cols-4 *:text-xl">
+              <div>Title</div>
+              <div>User</div>
+              <div>Status</div>
+              <div>Actions</div>
+            </div>
             {tasks.map((task) => (
-              <li className="flex items-center justify-between" key={task.id}>
-                <div>
-                  {task.title} {task.isDone ? "✅" : "❌"}
-                </div>
-                <div className="flex gap-1">
-                  <button className="border border-white">Edit</button>
+              <li className="grid grid-cols-4" key={task.id}>
+                <div>{task.title}</div>
+                <div>{task.user.email} </div>
+                <div>{task.isDone ? "✅" : "❌"}</div>
+                <div className="flex gap-1 justify-end">
+                  {!task.isDone && (
+                    <button
+                      className="border border-white bg-green-700"
+                      onClick={() => OnMarkAsDone(task.id)}
+                    >
+                      Done
+                    </button>
+                  )}
                   <button
                     className="border bg-red-500"
                     onClick={() => OnDelete(task.id)}
