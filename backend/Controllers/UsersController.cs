@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using task_manager_api.Data;
+using task_manager_api.DTOs;
+using task_manager_api.Interfaces;
 using task_manager_api.Models;
 
 namespace task_manager_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController(ApplicationDbContext context) : ControllerBase
+    public class UsersController(ApplicationDbContext context, IHashPasswordService hashService) : ControllerBase
     {
         private readonly ApplicationDbContext _context = context;
+        private readonly IHashPasswordService _hashService = hashService;
 
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -28,9 +31,18 @@ namespace task_manager_api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] User user)
+        public async Task<IActionResult> Create([FromBody] CreateUserDto dto)
         {
-            _context.Users.Add(user);
+            var existingUser = await _context.Users.SingleOrDefaultAsync(u => EF.Functions.ILike(u.Email, dto.Email));
+            if (existingUser != null) return Conflict(new {message = "email already in use"});
+
+            var user = new User
+            {
+                Email = dto.Email.ToLower(),
+                PasswordHash = _hashService.HashPassword(dto.Password)
+            };
+
+            await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
         }

@@ -1,0 +1,7 @@
+﻿namespace task_manager_api.Interfaces;
+
+public interface IHashPasswordService
+{
+    string HashPassword(string password);
+    bool VerifyPassword(string password, string storedHash);
+}
