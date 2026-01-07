@@ -82,9 +82,7 @@ function Tasks(props) {
       <Container className={props.className}>
         <Heading>
           <h2 className="text-2xl">Tasks</h2>
-          <PrimaryButton onClick={() => setIsOpen(true)}>
-            Add
-          </PrimaryButton>
+          <PrimaryButton onClick={() => setIsOpen(true)}>Add</PrimaryButton>
         </Heading>
         <Table>
           <TableHeader className="grid-cols-4">
@@ -95,8 +93,12 @@ function Tasks(props) {
           </TableHeader>
           {tasks.map((task) => (
             <TableEntry className="grid-cols-4" key={task.id}>
-              <div>{task.title}</div>
-              <div>{task.user.email} </div>
+              <p className="overflow-clip" title={task.user.email}>
+                {task.title}
+              </p>
+              <p className="overflow-clip" title={task.user.email}>
+                {task.user.email}
+              </p>
               <div>{task.isDone ? "✅" : "❌"}</div>
               <div className="flex gap-1 justify-end">
                 {!task.isDone && (

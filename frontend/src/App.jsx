@@ -7,7 +7,7 @@ function App() {
   const [currentTab, setCurrentTab] = useState("tasks");
 
   function changeTab(tab) {
-    if(currentTab === tab) return
+    if (currentTab === tab) return;
     setCurrentTab(tab);
   }
 
@@ -15,7 +15,7 @@ function App() {
     <div className="app h-screen flex flex-col gap-3">
       <h1>📝 React Task Evaluator</h1>
       <nav>
-        <ul className="flex items-center justify-center gap-10 border-b max-w-150 mx-auto *:text-lg *:cursor-pointer">
+        <ul className="flex items-center justify-center gap-10 border-b max-w-300 mx-auto *:text-lg *:cursor-pointer">
           <li
             className={
               currentTab === "tasks" ? "border-b-5 border-blue-500" : ""

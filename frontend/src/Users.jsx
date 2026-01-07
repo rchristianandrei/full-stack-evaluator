@@ -64,18 +64,21 @@ function Users(props) {
       <Container className={props.className}>
         <Heading>
           <h2 className="text-2xl">Users</h2>
-          <PrimaryButton onClick={() => setIsOpen(true)}>
-            Add
-          </PrimaryButton>
+          <PrimaryButton onClick={() => setIsOpen(true)}>Add</PrimaryButton>
         </Heading>
         <Table>
-          <TableHeader className="grid-cols-[1fr_100px]">
+          <TableHeader className="grid-cols-2 sm:grid-cols-[1fr_100px]">
             <div className="text-start">Email</div>
             <div>Actions</div>
           </TableHeader>
           {users.map((user) => (
-            <TableEntry className="grid-cols-[1fr_100px]" key={user.id}>
-              <div className="text-start">{user.email} </div>
+            <TableEntry
+              className="grid-cols-2 sm:grid-cols-[1fr_100px]"
+              key={user.id}
+            >
+              <p className="text-start overflow-clip" title={user.email}>
+                {user.email}
+              </p>
               <DeleteButton onClick={() => OnDelete(user.id)}>
                 Delete
               </DeleteButton>
