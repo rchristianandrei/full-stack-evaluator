@@ -7,6 +7,11 @@ namespace task_manager_api.Repositories;
 
 public class TaskItemRepository(ApplicationDbContext context) : BaseRepository<TaskItem>(context), ITaskItemRepository
 {
+    public override async Task<IEnumerable<TaskItem>> GetAll()
+    {
+        return await dbSet.OrderBy(t => t.Id).ToListAsync();
+    }
+
     public async Task<TaskItem?> GetByIdIncludeAll(int id)
     {
         return await dbSet.Include(t => t.User).FirstOrDefaultAsync(t => t.Id == id);

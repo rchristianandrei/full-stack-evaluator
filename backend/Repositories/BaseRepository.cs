@@ -14,7 +14,7 @@ public abstract class BaseRepository<T>(ApplicationDbContext context) : IBaseRep
         await context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<T>> GetAll()
+    public virtual async Task<IEnumerable<T>> GetAll()
     {
         return await dbSet.ToListAsync();
     }
