@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
 
 namespace task_manager_api.DTOs;
 
@@ -31,4 +32,15 @@ public record UpdateTaskItemDto
     int UserId,
 
     bool IsDone
+);
+
+public record PatchTaskItemDto
+(
+    [MinLength(1)]
+    string? Title,
+
+    [Range(1, int.MaxValue)]
+    int? UserId,
+
+    bool? IsDone
 );

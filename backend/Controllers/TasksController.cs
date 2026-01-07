@@ -46,7 +46,7 @@ namespace task_manager_api.Controllers
             return CreatedAtAction(nameof(Get), new { id = task.Id }, task.ToDto());
         }
 
-        [HttpPut("{id}")] 
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateTaskItemDto updated)
         {
             var task = await _taskItemRepo.GetById(id);
@@ -63,6 +63,35 @@ namespace task_manager_api.Controllers
 
             return Ok(task.ToDto());
         }
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch(int id, [FromBody] PatchTaskItemDto updated)
+        {
+            var task = await _taskItemRepo.GetById(id);
+            if (task == null) return NotFound();
+
+            if (updated.Title != null)
+            {
+                task.Title = updated.Title;
+            }
+
+            if (updated.UserId != null)
+            {
+                var user = await _userRepo.GetById(updated.UserId.Value);
+                if (user == null) return NotFound();
+
+                task.UserId = updated.UserId.Value;
+            }
+
+            if (updated.IsDone != null)
+            {
+                task.IsDone = updated.IsDone.Value;
+            }
+
+            await _taskItemRepo.SaveChanges();
+
+            return Ok(task.ToDto());
+        }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
