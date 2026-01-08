@@ -21,6 +21,11 @@ As mentioned in README.md, this file contains a summary of the implementations I
 
 - This project does not include any automated tests
 
-## Testing
+## Setup
 
-Simply follow the already existing setup in this project files
+1. Install dependencies for both projects
+2. Create .env file for frontend and backend
+3. Frontend env should contain: VITE_API_BASE_URL=https://localhost:7144 or wherever the backend api is running
+4. Backend env should contain: ConnectionStrings__DefaultConnection=postgresqlConnectionString
+6. Run this command inside the backend folder to create or update the database: dotnet ef database update
+7. Run both application
