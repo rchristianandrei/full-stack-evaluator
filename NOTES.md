@@ -25,7 +25,17 @@ As mentioned in README.md, this file contains a summary of the implementations I
 
 1. Install dependencies for both projects
 2. Create .env file for frontend and backend
-3. Frontend env should contain: VITE_API_BASE_URL=https://localhost:7144 or wherever the backend api is running
-4. Backend env should contain: ConnectionStrings__DefaultConnection=postgresqlConnectionString
-6. Run this command inside the backend folder to create or update the database: dotnet ef database update
-7. Run both application
+3. Frontend env should contain something like:
+
+   - VITE_API_BASE_URL=https://localhost:7144
+     - for the backend api address
+
+4. Backend env should contain something like:
+
+   - ConnectionStrings\_\_DefaultConnection=Host=localhost;Port=5432;Database=mydb;Username=postgres;Password=admin;
+     - for postgreSQL address
+   - Cors\_\_AllowedOrigins\_\_0=http://localhost:5173
+     - for allowed origins where where 0 is the index on the array
+
+5. Run this command inside the backend folder to create or update the database: dotnet ef database update
+6. Run both application
