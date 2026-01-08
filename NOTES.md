@@ -17,7 +17,7 @@ As mentioned in README.md, this file contains a summary of the implementations I
 - Created Service and Repository classes to follow the SRP
 - Manage Dependencies
 
-## What's mssing
+## What's missing
 
 - This project does not include any automated tests
 
