@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { SubmitButton } from "../../components/buttons/SubmitButton";
 import { GenericInput } from "../../components/inputs/GenericInput";
+import authRepo from "../../api/authRepo";
 
 export function Login() {
   const [formData, setFormData] = useState({
@@ -12,9 +13,19 @@ export function Login() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     console.log(formData);
+
+    authRepo
+      .login(formData.email, formData.password)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
   };
 
   return (

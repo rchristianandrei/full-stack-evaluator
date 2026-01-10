@@ -14,7 +14,7 @@ public class AuthController(
         JwtSettings jwtSettings
 ) : ControllerBase
 {
-    [HttpPost("/login")]
+    [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
         var user = await userRepo.GetByEmail(dto.Email);
@@ -31,8 +31,8 @@ public class AuthController(
         Response.Cookies.Append("Authorization", token, new CookieOptions
         {
             HttpOnly = true,
-            Secure = false,
-            SameSite = SameSiteMode.Lax,
+            Secure = true,
+            SameSite = SameSiteMode.None,
             Expires = DateTime.UtcNow.AddMinutes(Convert.ToInt32(jwtSettings.ExpireMinutes))
         });
 
