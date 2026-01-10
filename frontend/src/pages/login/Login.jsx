@@ -1,13 +1,20 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { SubmitButton } from "../../components/buttons/SubmitButton";
 import { GenericInput } from "../../components/inputs/GenericInput";
 import authRepo from "../../api/authRepo";
+import { useAuth } from "../../context/AuthProvider";
 
 export function Login() {
+  const { setUser } = useAuth();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  const [errMssg, setErrMssg] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -15,17 +22,16 @@ export function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrMssg("");
 
-    console.log(formData);
-
-    authRepo
-      .login(formData.email, formData.password)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
+    try {
+      await authRepo.login(formData.email, formData.password);
+      const user = await authRepo.getMe();
+      setUser(user);
+      navigate("/", { replace: true });
+    } catch (err) {
+      setErrMssg(err.response.data);
+    }
   };
 
   return (
@@ -49,6 +55,7 @@ export function Login() {
             onChange={handleChange}
             required={true}
           />
+          {errMssg && <div className="text-red-400 text-center">{errMssg}</div>}
           <SubmitButton>Login</SubmitButton>
         </form>
       </section>

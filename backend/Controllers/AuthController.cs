@@ -39,28 +39,14 @@ public class AuthController(
         return Ok();
     }
 
-    // GET api/<AuthController>/5
-    [HttpGet("{id}")]
-    public string Get(int id)
+    [HttpGet("me")]
+    public IActionResult GetUser()
     {
-        return "value";
-    }
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
 
-    // POST api/<AuthController>
-    [HttpPost]
-    public void Post([FromBody] string value)
-    {
-    }
+        if (userId == null) return BadRequest("No credentials found");
 
-    // PUT api/<AuthController>/5
-    [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
-    {
-    }
-
-    // DELETE api/<AuthController>/5
-    [HttpDelete("{id}")]
-    public void Delete(int id)
-    {
+        return Ok(new { Id = userId, Email = email});
     }
 }
