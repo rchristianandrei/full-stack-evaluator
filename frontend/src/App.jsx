@@ -1,42 +1,18 @@
-import { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
-import Tasks from "./Tasks";
-import Users from "./Users";
+import { Home } from "./pages/Home";
+import { Login } from "./pages/login/Login";
 
 function App() {
-  const [currentTab, setCurrentTab] = useState("tasks");
-
-  function changeTab(tab) {
-    if (currentTab === tab) return;
-    setCurrentTab(tab);
-  }
-
   return (
-    <div className="app h-screen flex flex-col gap-3">
-      <h1>📝 React Task Evaluator</h1>
-      <nav>
-        <ul className="flex items-center justify-center gap-10 border-b max-w-300 mx-auto *:text-lg *:cursor-pointer">
-          <li
-            className={
-              currentTab === "tasks" ? "border-b-5 border-blue-500" : ""
-            }
-            onClick={() => changeTab("tasks")}
-          >
-            Tasks
-          </li>
-          <li
-            className={
-              currentTab === "users" ? "border-b-5 border-blue-500" : ""
-            }
-            onClick={() => changeTab("users")}
-          >
-            Users
-          </li>
-        </ul>
-      </nav>
-      {currentTab === "tasks" && <Tasks className="flex-1" />}
-      {currentTab === "users" && <Users className="flex-1" />}
-    </div>
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login></Login>} />
+          <Route path="/" element={<Home></Home>} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 

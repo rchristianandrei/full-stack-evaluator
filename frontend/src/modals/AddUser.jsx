@@ -55,7 +55,6 @@ function AddUser(props) {
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full rounded border px-3 py-2 focus:border-blue-500 focus:outline-none"
             required={true}
           />
 
