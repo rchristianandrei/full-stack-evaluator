@@ -1,5 +1,3 @@
-import { DeleteButton } from "../../components/buttons/DeleteButton";
-
 export function Card({ task, OnDelete, OnMarkAsDone }) {
   return (
     <li className="flex flex-col gap-2 border h-75 rounded">

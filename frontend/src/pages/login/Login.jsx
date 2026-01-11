@@ -36,7 +36,7 @@ export function Login() {
 
   return (
     <section className="w-screen h-screen flex items-center justify-center">
-      <section className="border rounded p-10">
+      <section className="border rounded p-10 w-150">
         <form className="flex gap-4 flex-col" onSubmit={handleSubmit}>
           <h1 className="text-center">Task Manager</h1>
           <GenericInput
