@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 using task_manager_api.DTOs;
 using task_manager_api.Interfaces;
+using task_manager_api.Models;
 using task_manager_api.Settings;
 
 namespace task_manager_api.Controllers;
@@ -19,12 +21,8 @@ public class AuthController(
     {
         var user = await userRepo.GetByEmail(dto.Email);
 
-        if (user == null) return BadRequest("Invalid Credentials");
-
-        if (!hashService.VerifyPassword(dto.Password, user.PasswordHash))
-        {
+        if (user == null || !hashService.VerifyPassword(dto.Password, user.PasswordHash)) 
             return BadRequest("Invalid Credentials");
-        }
 
         var token = jwtService.GenerateToken(user);
 
@@ -35,6 +33,27 @@ public class AuthController(
             SameSite = SameSiteMode.None,
             Expires = DateTime.UtcNow.AddMinutes(Convert.ToInt32(jwtSettings.ExpireMinutes))
         });
+
+        return Ok();
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] LoginDto dto)
+    {
+        string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+        if (!Regex.IsMatch(dto.Email, pattern, RegexOptions.IgnoreCase))
+            return BadRequest("Invalid email format");
+        
+        var existingUser = await userRepo.GetByEmail(dto.Email);
+        if (existingUser != null) return BadRequest("Email is already in use");
+
+        var user = new User
+        {
+            Email = dto.Email.ToLower(),
+            PasswordHash = hashService.HashPassword(dto.Password)
+        };
+
+        await userRepo.Add(user);
 
         return Ok();
     }

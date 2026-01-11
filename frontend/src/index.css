@@ -15,6 +15,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+h1 {
+  @apply text-lg md:text-2xl;
+}
+
 button {
   border-radius: 8px;
   /* border: 1px solid transparent; */
