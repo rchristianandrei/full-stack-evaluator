@@ -4,5 +4,6 @@ namespace task_manager_api.Interfaces;
 
 public interface ITaskItemRepository : IBaseRepository<TaskItem>
 {
+    Task<IEnumerable<TaskItem>> GetAllByUserId(int userId);
     Task<TaskItem?> GetByIdIncludeAll(int id);
 }

@@ -8,12 +8,10 @@ import { ModalCloseButton } from "../../components/modal/ModalCloseButton";
 import { ModalHeader } from "../../components/modal/ModalHeader";
 import { GenericInput } from "../../components/inputs/GenericInput";
 import { SubmitButton } from "../../components/buttons/SubmitButton";
-import { DropdownBox } from "../../components/inputs/DropdownBox";
 
 function AddTask(props) {
   const [formData, setFormData] = useState({
     title: "",
-    userId: "",
   });
 
   const [users, setUsers] = useState([]);
@@ -76,23 +74,6 @@ function AddTask(props) {
             className="w-full rounded border px-3 py-2 focus:border-blue-500 focus:outline-none"
             required={true}
           />
-
-          <DropdownBox
-            name="userId"
-            value={formData.userId}
-            onChange={handleChange}
-            className="w-full rounded border px-3 py-2 focus:border-blue-500 focus:outline-none *:bg-black"
-            required={true}
-          >
-            <option value="" disabled>
-              Select a user
-            </option>
-            {users.map((user) => (
-              <option key={user.id} value={`${user.id}`}>
-                {user.email}
-              </option>
-            ))}
-          </DropdownBox>
 
           <SubmitButton>Add</SubmitButton>
         </form>

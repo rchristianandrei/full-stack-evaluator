@@ -17,8 +17,11 @@ public class TasksController(ITaskItemRepository taskItemRepo, IUserRepository u
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        var tasks = await _taskItemRepo.GetAll();
-        return Ok(tasks.Select(t => t.ToDtoIncludeAll()));
+        var rawuserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (!int.TryParse(rawuserId, out int userId)) return BadRequest("Invalid User Id");
+
+        var tasks = await _taskItemRepo.GetAllByUserId(userId);
+        return Ok(tasks.Select(t => t.ToDto()));
     }
 
     [HttpGet("{id}")]
@@ -34,13 +37,16 @@ public class TasksController(ITaskItemRepository taskItemRepo, IUserRepository u
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateTaskItemDto dto)
     {
-        var user = await _userRepo.GetById(dto.UserId);
+        var rawuserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (!int.TryParse(rawuserId, out int userId)) return BadRequest("Invalid User Id");
+
+        var user = await _userRepo.GetById(userId);
         if (user == null) return NotFound();
 
         var task = new TaskItem
         {
             Title = dto.Title,
-            UserId = dto.UserId,
+            UserId = userId,
         };
 
         await _taskItemRepo.Add(task);

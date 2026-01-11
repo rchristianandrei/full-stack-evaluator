@@ -12,6 +12,11 @@ public class TaskItemRepository(ApplicationDbContext context) : BaseRepository<T
         return await dbSet.Include(t => t.User).OrderBy(t => t.Id).ToListAsync();
     }
 
+    public async Task<IEnumerable<TaskItem>> GetAllByUserId(int userId)
+    {
+        return await dbSet.Where(t => t.UserId == userId).ToListAsync();
+    }
+
     public async Task<TaskItem?> GetByIdIncludeAll(int id)
     {
         return await dbSet.Include(t => t.User).FirstOrDefaultAsync(t => t.Id == id);

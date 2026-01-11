@@ -114,22 +114,18 @@ function Tasks(props) {
           <PrimaryButton onClick={() => setIsOpen(true)}>Add</PrimaryButton>
         </div>
         <ul className="flex-1 w-full max-w-300 mx-auto flex flex-col gap-2 px-4 border">
-          <div className={`grid grid-cols-4 *:text-xl`}>
+          <div className={`grid grid-cols-3 *:text-xl text-center`}>
             <div>Title</div>
-            <div>User</div>
             <div>Status</div>
             <div>Actions</div>
           </div>
           {tasks.map((task) => (
-            <li className={`grid grid-cols-4`} key={task.id}>
-              <p className="overflow-clip" title={task.user.email}>
+            <li className={`grid grid-cols-3`} key={task.id}>
+              <p className="overflow-clip" title={task.title}>
                 {task.title}
               </p>
-              <p className="overflow-clip" title={task.user.email}>
-                {task.user.email}
-              </p>
-              <div>{task.isDone ? "✅" : "❌"}</div>
-              <div className="flex gap-1 justify-end">
+              <div className="text-center">{task.isDone ? "✅" : "❌"}</div>
+              <div className="flex flex-wrap gap-1 justify-end">
                 {!task.isDone && (
                   <button
                     className="border border-white bg-green-700"

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Runtime.InteropServices;
 
 namespace task_manager_api.DTOs;
 
@@ -16,10 +15,7 @@ public record CreateTaskItemDto
 (
     [Required]
     [MinLength(1)]
-    string Title,
-
-    [Range(1, int.MaxValue)]
-    int UserId
+    string Title
 );
 
 public record UpdateTaskItemDto
