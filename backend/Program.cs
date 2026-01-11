@@ -1,17 +1,27 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using task_manager_api.Data;
+using task_manager_api.Extensions;
 using task_manager_api.Interfaces;
 using task_manager_api.Repositories;
 using task_manager_api.Services;
+using task_manager_api.Settings;
 
 DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
+// JWT
+builder.Services.AddJwt(builder.Configuration);
+
+// Services
 builder.Services.AddScoped<IHashPasswordService, HashPasswordService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
 
+// CORS
 var allowedOrigins = builder.Configuration
     .GetSection("Cors:AllowedOrigins")
     .Get<string[]>();
@@ -22,7 +32,8 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(allowedOrigins!)
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
