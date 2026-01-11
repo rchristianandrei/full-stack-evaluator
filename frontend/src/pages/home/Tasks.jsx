@@ -115,7 +115,7 @@ function Tasks(props) {
           <h2 className="text-2xl">My Tasks</h2>
           <PrimaryButton onClick={() => setIsOpen(true)}>Add</PrimaryButton>
         </div>
-        <ul className="flex-1 max-w-300 mx-auto overflow-auto">
+        <ul className="flex-1 max-w-300 mx-auto w-full overflow-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
             {tasks.map((task) => (
               <Card

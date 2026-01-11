@@ -12,6 +12,7 @@ import { SubmitButton } from "../../components/buttons/SubmitButton";
 function AddTask(props) {
   const [formData, setFormData] = useState({
     title: "",
+    details: "",
   });
 
   const [users, setUsers] = useState([]);
@@ -71,9 +72,21 @@ function AddTask(props) {
             placeholder="Title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full rounded border px-3 py-2 focus:border-blue-500 focus:outline-none"
+            className=""
             required={true}
           />
+
+          <textarea
+            className="w-full rounded border px-3 py-2 focus:border-blue-500 focus:outline-none resize-none"
+            name="details"
+            rows={10}
+            minLength={1}
+            maxLength={100}
+            placeholder="Details"
+            value={formData.details}
+            onChange={handleChange}
+            required
+          ></textarea>
 
           <SubmitButton>Add</SubmitButton>
         </form>

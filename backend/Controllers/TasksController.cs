@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata.Ecma335;
+using task_manager_api.Attribute;
 using task_manager_api.DTOs;
 using task_manager_api.Interfaces;
 using task_manager_api.Mapper;
@@ -46,6 +46,7 @@ public class TasksController(ITaskItemRepository taskItemRepo, IUserRepository u
         var task = new TaskItem
         {
             Title = dto.Title,
+            Details = dto.Details,
             UserId = userId,
         };
 

@@ -6,6 +6,7 @@ public record TaskItemDto
 (
     int Id,
     string Title,
+    string Details,
     bool IsDone,
     int UserId,
     UserDto? User
@@ -15,7 +16,13 @@ public record CreateTaskItemDto
 (
     [Required]
     [MinLength(1)]
-    string Title
+    [MaxLength(25)]
+    string Title,
+
+    [Required]
+    [MinLength(1)]
+    [MaxLength(100)]
+    string Details
 );
 
 public record UpdateTaskItemDto
