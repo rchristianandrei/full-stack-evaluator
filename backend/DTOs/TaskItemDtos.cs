@@ -24,9 +24,6 @@ public record UpdateTaskItemDto
     [MinLength(1)]
     string Title,
 
-    [Range(1, int.MaxValue)]
-    int UserId,
-
     bool IsDone
 );
 
@@ -34,9 +31,6 @@ public record PatchTaskItemDto
 (
     [MinLength(1)]
     string? Title,
-
-    [Range(1, int.MaxValue)]
-    int? UserId,
 
     bool? IsDone
 );

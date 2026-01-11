@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata.Ecma335;
 using task_manager_api.DTOs;
 using task_manager_api.Interfaces;
 using task_manager_api.Mapper;
 using task_manager_api.Models;
 namespace task_manager_api.Controllers;
 
+[ExtractUserData]
 [Authorize]
 [Route("api/[controller]")]
 [ApiController]
@@ -17,8 +19,7 @@ public class TasksController(ITaskItemRepository taskItemRepo, IUserRepository u
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        var rawuserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        if (!int.TryParse(rawuserId, out int userId)) return BadRequest("Invalid User Id");
+        int userId = (int)(HttpContext.Items["UserId"] ?? 0);
 
         var tasks = await _taskItemRepo.GetAllByUserId(userId);
         return Ok(tasks.Select(t => t.ToDto()));
@@ -37,8 +38,7 @@ public class TasksController(ITaskItemRepository taskItemRepo, IUserRepository u
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateTaskItemDto dto)
     {
-        var rawuserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        if (!int.TryParse(rawuserId, out int userId)) return BadRequest("Invalid User Id");
+        int userId = (int)(HttpContext.Items["UserId"] ?? 0);
 
         var user = await _userRepo.GetById(userId);
         if (user == null) return NotFound();
@@ -57,20 +57,22 @@ public class TasksController(ITaskItemRepository taskItemRepo, IUserRepository u
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateTaskItemDto updated)
     {
+        int userId = (int)(HttpContext.Items["UserId"] ?? 0);
+
         var task = await _taskItemRepo.GetById(id);
         if (task == null) return NotFound();
 
-        var user = await _userRepo.GetById(updated.UserId);
+        var user = await _userRepo.GetById(userId);
         if (user == null) return NotFound();
 
         task.Title = updated.Title;
         task.IsDone = updated.IsDone;
-        task.UserId = updated.UserId;
 
         await _taskItemRepo.SaveChanges();
 
         return Ok(task.ToDto());
     }
+
     [HttpPatch("{id}")]
     public async Task<IActionResult> Patch(int id, [FromBody] PatchTaskItemDto updated)
     {
@@ -80,14 +82,6 @@ public class TasksController(ITaskItemRepository taskItemRepo, IUserRepository u
         if (updated.Title != null)
         {
             task.Title = updated.Title;
-        }
-
-        if (updated.UserId != null)
-        {
-            var user = await _userRepo.GetById(updated.UserId.Value);
-            if (user == null) return NotFound();
-
-            task.UserId = updated.UserId.Value;
         }
 
         if (updated.IsDone != null)
