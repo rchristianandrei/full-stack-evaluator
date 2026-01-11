@@ -42,7 +42,8 @@ export function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (errMssg !== "") return;
+    if (formData.password !== formData.confirmPassword) return;
+    setErrMssg("");
 
     setConfirmData(() => ({
       isOpen: true,
@@ -65,6 +66,7 @@ export function Register() {
             noText: "Cancel",
           }));
         } catch (err) {
+          setConfirmData((data) => ({ ...data, isOpen: false }));
           setErrMssg(err.response.data);
         }
       },
