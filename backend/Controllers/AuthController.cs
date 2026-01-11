@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 using task_manager_api.DTOs;
 using task_manager_api.Interfaces;
@@ -37,8 +38,23 @@ public class AuthController(
         return Ok();
     }
 
+    [Authorize]
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        Response.Cookies.Append("Authorization", "", new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Expires = DateTime.UtcNow.AddDays(-1)
+        });
+
+        return Ok();
+    }
+
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] LoginDto dto)
+    public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
         string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
         if (!Regex.IsMatch(dto.Email, pattern, RegexOptions.IgnoreCase))
@@ -58,6 +74,7 @@ public class AuthController(
         return Ok();
     }
 
+    [Authorize]
     [HttpGet("me")]
     public IActionResult GetUser()
     {

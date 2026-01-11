@@ -1,107 +1,108 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using task_manager_api.DTOs;
 using task_manager_api.Interfaces;
 using task_manager_api.Mapper;
 using task_manager_api.Models;
-namespace task_manager_api.Controllers
+namespace task_manager_api.Controllers;
+
+[Authorize]
+[Route("api/[controller]")]
+[ApiController]
+public class TasksController(ITaskItemRepository taskItemRepo, IUserRepository userRepo) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class TasksController(ITaskItemRepository taskItemRepo, IUserRepository userRepo) : ControllerBase
+    private readonly ITaskItemRepository _taskItemRepo = taskItemRepo;
+    private readonly IUserRepository _userRepo = userRepo;
+
+    [HttpGet]
+    public async Task<IActionResult> Get()
     {
-        private readonly ITaskItemRepository _taskItemRepo = taskItemRepo;
-        private readonly IUserRepository _userRepo = userRepo;
+        var tasks = await _taskItemRepo.GetAll();
+        return Ok(tasks.Select(t => t.ToDtoIncludeAll()));
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var task = await _taskItemRepo.GetByIdIncludeAll(id);
+
+        if (task == null) return NotFound();
+
+        return Ok(task.ToDtoIncludeAll());
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateTaskItemDto dto)
+    {
+        var user = await _userRepo.GetById(dto.UserId);
+        if (user == null) return NotFound();
+
+        var task = new TaskItem
         {
-            var tasks = await _taskItemRepo.GetAll();
-            return Ok(tasks.Select(t => t.ToDtoIncludeAll()));
-        }
+            Title = dto.Title,
+            UserId = dto.UserId,
+        };
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        await _taskItemRepo.Add(task);
+
+        return CreatedAtAction(nameof(Get), new { id = task.Id }, task.ToDto());
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateTaskItemDto updated)
+    {
+        var task = await _taskItemRepo.GetById(id);
+        if (task == null) return NotFound();
+
+        var user = await _userRepo.GetById(updated.UserId);
+        if (user == null) return NotFound();
+
+        task.Title = updated.Title;
+        task.IsDone = updated.IsDone;
+        task.UserId = updated.UserId;
+
+        await _taskItemRepo.SaveChanges();
+
+        return Ok(task.ToDto());
+    }
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> Patch(int id, [FromBody] PatchTaskItemDto updated)
+    {
+        var task = await _taskItemRepo.GetById(id);
+        if (task == null) return NotFound();
+
+        if (updated.Title != null)
         {
-            var task = await _taskItemRepo.GetByIdIncludeAll(id);
-
-            if (task == null) return NotFound();
-
-            return Ok(task.ToDtoIncludeAll());
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateTaskItemDto dto)
-        {
-            var user = await _userRepo.GetById(dto.UserId);
-            if (user == null) return NotFound();
-
-            var task = new TaskItem
-            {
-                Title = dto.Title,
-                UserId = dto.UserId,
-            };
-
-            await _taskItemRepo.Add(task);
-
-            return CreatedAtAction(nameof(Get), new { id = task.Id }, task.ToDto());
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateTaskItemDto updated)
-        {
-            var task = await _taskItemRepo.GetById(id);
-            if (task == null) return NotFound();
-
-            var user = await _userRepo.GetById(updated.UserId);
-            if (user == null) return NotFound();
-
             task.Title = updated.Title;
-            task.IsDone = updated.IsDone;
-            task.UserId = updated.UserId;
-
-            await _taskItemRepo.SaveChanges();
-
-            return Ok(task.ToDto());
         }
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> Patch(int id, [FromBody] PatchTaskItemDto updated)
+
+        if (updated.UserId != null)
         {
-            var task = await _taskItemRepo.GetById(id);
-            if (task == null) return NotFound();
+            var user = await _userRepo.GetById(updated.UserId.Value);
+            if (user == null) return NotFound();
 
-            if (updated.Title != null)
-            {
-                task.Title = updated.Title;
-            }
-
-            if (updated.UserId != null)
-            {
-                var user = await _userRepo.GetById(updated.UserId.Value);
-                if (user == null) return NotFound();
-
-                task.UserId = updated.UserId.Value;
-            }
-
-            if (updated.IsDone != null)
-            {
-                task.IsDone = updated.IsDone.Value;
-            }
-
-            await _taskItemRepo.SaveChanges();
-
-            return Ok(task.ToDto());
+            task.UserId = updated.UserId.Value;
         }
 
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        if (updated.IsDone != null)
         {
-            var task = await _taskItemRepo.GetById(id);
-            if (task == null) return NotFound();
-
-            await _taskItemRepo.Remove(task);
-
-            return NoContent();
+            task.IsDone = updated.IsDone.Value;
         }
+
+        await _taskItemRepo.SaveChanges();
+
+        return Ok(task.ToDto());
+    }
+
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var task = await _taskItemRepo.GetById(id);
+        if (task == null) return NotFound();
+
+        await _taskItemRepo.Remove(task);
+
+        return NoContent();
     }
 }
