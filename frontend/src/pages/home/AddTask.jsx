@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import taskRepo from "../api/taskRepo";
-import userRepo from "../api/userRepo";
-import { BackDrop } from "../components/BackDrop";
-import { Modal } from "../components/modal/Modal";
-import { ModalContainer } from "../components/modal/ModalContainer";
-import { ModalCloseButton } from "../components/modal/ModalCloseButton";
-import { ModalHeader } from "../components/modal/ModalHeader";
-import { GenericInput } from "../components/inputs/GenericInput";
-import { SubmitButton } from "../components/buttons/SubmitButton";
-import { DropdownBox } from "../components/inputs/DropdownBox";
+import taskRepo from "../../api/taskRepo";
+import userRepo from "../../api/userRepo";
+import { BackDrop } from "../../components/modal/BackDrop";
+import { Modal } from "../../components/modal/Modal";
+import { ModalContainer } from "../../components/modal/ModalContainer";
+import { ModalCloseButton } from "../../components/modal/ModalCloseButton";
+import { ModalHeader } from "../../components/modal/ModalHeader";
+import { GenericInput } from "../../components/inputs/GenericInput";
+import { SubmitButton } from "../../components/buttons/SubmitButton";
+import { DropdownBox } from "../../components/inputs/DropdownBox";
 
 function AddTask(props) {
   const [formData, setFormData] = useState({

@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Home } from "./pages/Home";
+import { Home } from "./pages/home/Home";
 import { Login } from "./pages/login/Login";
 import { AuthProvider } from "./context/AuthProvider";
 import PrivateRoute from "./guards/PrivateRoute";

@@ -1,3 +1,9 @@
+import { BackDrop } from "./modal/BackDrop";
+import { Modal } from "./modal/Modal";
+import { ModalCloseButton } from "./modal/ModalCloseButton";
+import { ModalContainer } from "./modal/ModalContainer";
+import { ModalHeader } from "./modal/ModalHeader";
+
 export function ConfirmPopup({
   isOpen = false,
   title = "Are you sure?",
@@ -10,13 +16,11 @@ export function ConfirmPopup({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
-      {/* <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onNo} /> */}
-      <div className="absolute inset-0 bg-black/50" onClick={onNo} />
-      {/* Modal */}
-      <div className="relative bg-black border rounded-lg shadow-lg w-full max-w-md p-6">
-        <h2 className="text-lg font-semibold mb-2">{title}</h2>
+    <ModalContainer>
+      <BackDrop onClick={onNo}></BackDrop>
+      <Modal>
+        <ModalCloseButton onClick={onNo}></ModalCloseButton>
+        <ModalHeader>{title}</ModalHeader>
         <p className="mb-6">{message}</p>
 
         <div className="flex justify-end gap-3">
@@ -34,7 +38,7 @@ export function ConfirmPopup({
             {yesText}
           </button>
         </div>
-      </div>
-    </div>
+      </Modal>
+    </ModalContainer>
   );
 }

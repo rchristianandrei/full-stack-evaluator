@@ -1,14 +1,9 @@
 import { useEffect, useState } from "react";
-import taskRepo from "./api/taskRepo";
-import AddTask from "./modals/AddTask";
-import { TableHeader } from "./components/table/TableHeader";
-import { TableEntry } from "./components/table/TableEntry";
-import { Table } from "./components/table/Table";
-import { Heading } from "./components/Heading";
-import { Container } from "./components/Container";
-import { DeleteButton } from "./components/buttons/DeleteButton";
-import { PrimaryButton } from "./components/buttons/PrimaryButton";
-import { ConfirmPopup } from "./components/ConfirmPopup";
+import taskRepo from "../../api/taskRepo";
+import AddTask from "./AddTask";
+import { DeleteButton } from "../../components/buttons/DeleteButton";
+import { PrimaryButton } from "../../components/buttons/PrimaryButton";
+import { ConfirmPopup } from "../../components/ConfirmPopup";
 
 function Tasks(props) {
   const [isOpen, setIsOpen] = useState(false);
@@ -111,20 +106,22 @@ function Tasks(props) {
 
   return (
     <>
-      <Container className={props.className}>
-        <Heading>
-          <h2 className="text-2xl">Tasks</h2>
+      <div className={`${props.className} flex flex-col gap-2`}>
+        <div
+          className={`flex items-center justify-between w-full max-w-300 mx-auto`}
+        >
+          <h2 className="text-2xl">My Tasks</h2>
           <PrimaryButton onClick={() => setIsOpen(true)}>Add</PrimaryButton>
-        </Heading>
-        <Table>
-          <TableHeader className="grid-cols-4">
+        </div>
+        <ul className="flex-1 w-full max-w-300 mx-auto flex flex-col gap-2 px-4 border">
+          <div className={`grid grid-cols-4 *:text-xl`}>
             <div>Title</div>
             <div>User</div>
             <div>Status</div>
             <div>Actions</div>
-          </TableHeader>
+          </div>
           {tasks.map((task) => (
-            <TableEntry className="grid-cols-4" key={task.id}>
+            <li className={`grid grid-cols-4`} key={task.id}>
               <p className="overflow-clip" title={task.user.email}>
                 {task.title}
               </p>
@@ -145,10 +142,10 @@ function Tasks(props) {
                   Delete
                 </DeleteButton>
               </div>
-            </TableEntry>
+            </li>
           ))}
-        </Table>
-      </Container>
+        </ul>
+      </div>
       {isOpen && <AddTask onClose={OnPopupClose}></AddTask>}
       <ConfirmPopup
         isOpen={confirmData.isOpen}
