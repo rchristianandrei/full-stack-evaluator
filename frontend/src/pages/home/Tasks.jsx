@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import taskRepo from "../../api/taskRepo";
 import AddTask from "./AddTask";
 import { PrimaryButton } from "../../components/buttons/PrimaryButton";
 import { ConfirmPopup } from "../../components/ConfirmPopup";
 import { Card } from "./Card";
+import {SearchBar} from "../../components/inputs/SearchBar";
 
 function Tasks(props) {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,23 +22,6 @@ function Tasks(props) {
     yesText: "Yes",
     noText: "No",
   });
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    taskRepo
-      .getAllTasks(controller)
-      .then((res) => setTasks(res.data))
-      .catch((err) => {
-        if (err.name !== "CanceledError") {
-          console.error(err);
-        }
-      });
-
-    return () => {
-      controller.abort();
-    };
-  }, []);
 
   function OnMarkAsDone(taskId, taskTitle) {
     setConfirmData((data) => ({
@@ -104,15 +88,26 @@ function Tasks(props) {
       .catch((err) => console.error(err));
   }
 
+  const handleSearch = async (query) => {
+    taskRepo
+      .getAllTasks(query)
+      .then((res) => setTasks(res.data))
+      .catch((err) => {
+        if (err.name !== "CanceledError") {
+          console.error(err);
+        }
+      });
+  };
+
   return (
     <>
       <div
         className={`${props.className} flex flex-col gap-2 px-2 overflow-auto`}
       >
         <div
-          className={`flex items-center justify-between w-full max-w-300 mx-auto`}
+          className={`flex items-center justify-between w-full max-w-300 mx-auto gap-2`}
         >
-          <h2 className="text-2xl">My Tasks</h2>
+          <SearchBar onSearch={handleSearch} delay={500}></SearchBar>
           <PrimaryButton onClick={() => setIsOpen(true)}>Add</PrimaryButton>
         </div>
         <ul className="flex-1 max-w-300 mx-auto w-full overflow-auto">

@@ -2,7 +2,7 @@ export function Card({ task, OnDelete, OnMarkAsDone }) {
   return (
     <li className="flex flex-col gap-2 border h-75 rounded">
       <div
-        className={`flex items-center justify-between px-4 py-1 ${
+        className={`flex items-center justify-between px-4 py-1 rounded-t ${
           task.isDone ? "bg-green-900" : "bg-red-900"
         }`}
       >

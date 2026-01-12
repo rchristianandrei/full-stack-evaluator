@@ -17,11 +17,11 @@ public class TasksController(ITaskItemRepository taskItemRepo, IUserRepository u
     private readonly IUserRepository _userRepo = userRepo;
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get([FromQuery] string search = "")
     {
         int userId = (int)(HttpContext.Items["UserId"] ?? 0);
 
-        var tasks = await _taskItemRepo.GetAllByUserId(userId);
+        var tasks = await _taskItemRepo.GetAllByUserId(userId, search);
         return Ok(tasks.Select(t => t.ToDto()));
     }
 

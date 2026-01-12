@@ -1,8 +1,8 @@
 import api from "./axios";
 
-function getAllTasks(controller) {
+function getAllTasks(query, controller) {
   return api.get(
-    "/tasks",
+    `/tasks?search=${query}`,
     controller
       ? {
           signal: controller.signal,
