@@ -5,6 +5,7 @@ import { AuthProvider } from "./context/AuthProvider";
 import PrivateRoute from "./guards/PrivateRoute";
 import PublicRoute from "./guards/PublicRoute";
 import { Register } from "./pages/register/Register";
+import { NotFound } from "./pages/NotFound";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route element={<PrivateRoute></PrivateRoute>}>
             <Route path="/" element={<Home></Home>} />
           </Route>
+          <Route path="*" element={<NotFound></NotFound>}></Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>
