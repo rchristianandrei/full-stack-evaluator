@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import taskRepo from "../../api/taskRepo";
-import userRepo from "../../api/userRepo";
 import { BackDrop } from "../../components/modal/BackDrop";
 import { Modal } from "../../components/modal/Modal";
 import { ModalContainer } from "../../components/modal/ModalContainer";
@@ -14,25 +13,6 @@ function AddTask(props) {
     title: "",
     details: "",
   });
-
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    userRepo
-      .getAll(controller)
-      .then((res) => setUsers(res.data))
-      .catch((err) => {
-        if (err.name !== "CanceledError") {
-          console.error(err);
-        }
-      });
-
-    return () => {
-      controller.abort();
-    };
-  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

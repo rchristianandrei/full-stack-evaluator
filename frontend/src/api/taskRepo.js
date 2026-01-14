@@ -2,7 +2,7 @@ import api from "./axios";
 
 function getAllTasks(query, controller) {
   return api.get(
-    `/tasks?search=${query}`,
+    `/tasks?search=${query ?? ""}`,
     controller
       ? {
           signal: controller.signal,
@@ -15,10 +15,10 @@ function addTask(task) {
   return api.post("/tasks", task);
 }
 
-function setToDone(taskId, status){
+function setToDone(taskId, status) {
   return api.patch(`/tasks/${taskId}`, {
-    isDone: status
-  })
+    isDone: status,
+  });
 }
 
 function deleteById(taskId) {

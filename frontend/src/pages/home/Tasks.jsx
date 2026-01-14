@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import taskRepo from "../../api/taskRepo";
 import AddTask from "./AddTask";
 import { PrimaryButton } from "../../components/buttons/PrimaryButton";
 import { ConfirmPopup } from "../../components/ConfirmPopup";
 import { Card } from "./Card";
-import {SearchBar} from "../../components/inputs/SearchBar";
+import { SearchBar } from "../../components/inputs/SearchBar";
 
 function Tasks(props) {
   const [isOpen, setIsOpen] = useState(false);
@@ -88,7 +88,7 @@ function Tasks(props) {
       .catch((err) => console.error(err));
   }
 
-  const handleSearch = async (query) => {
+  async function handleSearch(query) {
     taskRepo
       .getAllTasks(query)
       .then((res) => setTasks(res.data))
@@ -97,7 +97,7 @@ function Tasks(props) {
           console.error(err);
         }
       });
-  };
+  }
 
   return (
     <>
