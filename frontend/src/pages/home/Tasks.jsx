@@ -1,102 +1,58 @@
-import { useState } from "react";
-import taskRepo from "../../api/taskRepo";
+import { useEffect, useState } from "react";
 import AddTask from "./AddTask";
 import { PrimaryButton } from "../../components/buttons/PrimaryButton";
 import { ConfirmPopup } from "../../components/ConfirmPopup";
 import { Card } from "./Card";
 import { SearchBar } from "../../components/inputs/SearchBar";
+import { useTasks } from "../../hooks/useTasks";
+import { useConfirm } from "../../hooks/useConfirm";
 
 function Tasks(props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [tasks, setTasks] = useState([]);
-  const [confirmData, setConfirmData] = useState({
-    isOpen: false,
-    title: "Are you sure?",
-    message: "Do you want to continue?",
-    onYes: () => {
-      console.log("Yes");
-    },
-    onNo: () => {
-      console.log("No");
-    },
-    yesText: "Yes",
-    noText: "No",
-  });
+  const { tasks, query, setQuery, fetchTasks, onMarkDone, onDelete } =
+    useTasks();
+  const { confirmData, onMarkAsDone, onDeletePopup, onClose } = useConfirm();
+
+  useEffect(() => {
+    fetchTasks().catch((err) => console.log(err));
+  }, [query]);
 
   function OnMarkAsDone(taskId, taskTitle) {
-    setConfirmData((data) => ({
-      isOpen: true,
-      title: "Update Task",
-      message: `Are you sure you want to mark "${taskTitle}" as done?`,
-      onYes: () => {
-        taskRepo
-          .setToDone(taskId, true)
-          .then(() => {
-            taskRepo
-              .getAllTasks()
-              .then((res) => {
-                setTasks(res.data);
-                setConfirmData((data) => ({ ...data, isOpen: false }));
-              })
-              .catch((err) => console.error(err));
-          })
-          .catch((err) => console.log(err));
+    onMarkAsDone(
+      `Are you sure you want to mark "${taskTitle}" as done?`,
+      async () => {
+        await onMarkDone(taskId);
+        await fetchTasks();
+        onClose();
       },
-      onNo: () => {
-        setConfirmData((data) => ({ ...data, isOpen: false }));
-      },
-      yesText: "Mark as Done",
-      noText: "Cancel",
-    }));
+      () => {
+        onClose();
+      }
+    );
   }
 
   function OnDelete(taskId, taskTitle) {
-    setConfirmData((data) => ({
-      isOpen: true,
-      title: "Delete Task",
-      message: `Are you sure you want to delete "${taskTitle}"?`,
-      onYes: () => {
-        taskRepo
-          .deleteById(taskId)
-          .then(() => {
-            taskRepo
-              .getAllTasks()
-              .then((res) => {
-                setTasks(res.data);
-                setConfirmData((data) => ({ ...data, isOpen: false }));
-              })
-              .catch((err) => console.error(err));
-          })
-          .catch((err) => console.log(err));
-      },
-      onNo: () => {
-        setConfirmData((data) => ({ ...data, isOpen: false }));
-      },
-      yesText: "Delete",
-      noText: "Cancel",
-    }));
-  }
-
-  function OnPopupClose(success) {
-    setIsOpen(false);
-
-    if (!success) return;
-
-    taskRepo
-      .getAllTasks()
-      .then((res) => setTasks(res.data))
-      .catch((err) => console.error(err));
-  }
-
-  async function handleSearch(query) {
-    taskRepo
-      .getAllTasks(query)
-      .then((res) => setTasks(res.data))
-      .catch((err) => {
-        if (err.name !== "CanceledError") {
-          console.error(err);
+    onDeletePopup(
+      `Are you sure you want to delete "${taskTitle}"?`,
+      async () => {
+        try {
+          await onDelete(taskId);
+          await fetchTasks(query);
+          onClose();
+        } catch (err) {
+          console.log(err);
         }
-      });
+      },
+      () => {
+        onClose();
+      }
+    );
+  }
+
+  async function OnPopupClose(success) {
+    setIsOpen(false);
+    if (!success) return;
+    await fetchTasks();
   }
 
   return (
@@ -107,7 +63,7 @@ function Tasks(props) {
         <div
           className={`flex items-center justify-between w-full max-w-300 mx-auto gap-2`}
         >
-          <SearchBar onSearch={handleSearch} delay={500}></SearchBar>
+          <SearchBar query={query} onSearch={setQuery} delay={500}></SearchBar>
           <PrimaryButton onClick={() => setIsOpen(true)}>Add</PrimaryButton>
         </div>
         <ul className="flex-1 max-w-300 mx-auto w-full overflow-auto">
@@ -123,7 +79,7 @@ function Tasks(props) {
           </div>
         </ul>
       </div>
-      {isOpen && <AddTask onClose={OnPopupClose}></AddTask>}
+      <AddTask isOpen={isOpen} onClose={OnPopupClose}></AddTask>
       <ConfirmPopup
         isOpen={confirmData.isOpen}
         title={confirmData.title}
