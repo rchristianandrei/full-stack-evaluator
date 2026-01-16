@@ -30,6 +30,10 @@ function AddTask(props) {
     taskRepo
       .addTask(formData)
       .then(() => {
+        setFormData({
+          title: "",
+          details: "",
+        });
         props.onClose(true);
         toast.success("Successfully created task");
       })

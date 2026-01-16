@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import AddTask from "./AddTask";
 import { PrimaryButton } from "../../components/buttons/PrimaryButton";
 import { ConfirmPopup } from "../../components/ConfirmPopup";
@@ -10,14 +11,16 @@ import { FullScreenLoader } from "../../components/FullScreenLoader";
 
 export function Tasks(props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [errMssg, setErrMssg] = useState("");
+  const [loading, setLoading] = useState({
+    open: false,
+    message: ""
+  })
   const { tasks, isLoading, query, setQuery, fetchTasks, onMarkDone, onDelete } =
     useTasks();
   const { confirmData, onMarkAsDone, onDeletePopup, onClose } = useConfirm();
 
   useEffect(() => {
     fetchTasks()
-      .then(() => setErrMssg(""))
       .catch((err) => console.log(err));
   }, [query]);
 
@@ -25,7 +28,10 @@ export function Tasks(props) {
     onMarkAsDone(
       `Are you sure you want to mark "${taskTitle}" as done?`,
       async () => {
+        setLoading({open: true, message:"Marking as Done"})
         await onMarkDone(taskId);
+        setLoading(data => ({...data, open: false}))
+        toast.success("Task Done")
         onClose();
         await fetchTasks();
       },
@@ -40,8 +46,11 @@ export function Tasks(props) {
       `Are you sure you want to delete "${taskTitle}"?`,
       async () => {
         try {
+          setLoading({open: true, message:"Deleting Task"})
           await onDelete(taskId);
+          setLoading(data => ({...data, open: false}))
           onClose();
+          toast.success("Deleted Task")
           await fetchTasks(query);
         } catch (err) {
           console.log(err);
@@ -101,6 +110,7 @@ export function Tasks(props) {
         yesText={confirmData.yesText}
         noText={confirmData.noText}
       ></ConfirmPopup>
+      <FullScreenLoader open={loading.open} message={loading.message}></FullScreenLoader>
     </>
   );
 }
