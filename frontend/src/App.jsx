@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import { Home } from "./pages/home/Home";
 import { Login } from "./pages/login/Login";
 import { AuthProvider } from "./context/AuthProvider";
@@ -21,6 +22,7 @@ function App() {
           </Route>
           <Route path="*" element={<NotFound></NotFound>}></Route>
         </Routes>
+        <ToastContainer />
       </BrowserRouter>
     </AuthProvider>
   );

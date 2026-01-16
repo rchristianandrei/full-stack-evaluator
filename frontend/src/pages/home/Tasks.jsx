@@ -9,12 +9,15 @@ import { useConfirm } from "../../hooks/useConfirm";
 
 function Tasks(props) {
   const [isOpen, setIsOpen] = useState(false);
+  const [errMssg, setErrMssg] = useState("");
   const { tasks, query, setQuery, fetchTasks, onMarkDone, onDelete } =
     useTasks();
   const { confirmData, onMarkAsDone, onDeletePopup, onClose } = useConfirm();
 
   useEffect(() => {
-    fetchTasks().catch((err) => console.log(err));
+    fetchTasks()
+      .then(() => setErrMssg(""))
+      .catch((err) => console.log(err));
   }, [query]);
 
   function OnMarkAsDone(taskId, taskTitle) {
@@ -67,16 +70,23 @@ function Tasks(props) {
           <PrimaryButton onClick={() => setIsOpen(true)}>Add</PrimaryButton>
         </div>
         <ul className="flex-1 max-w-300 mx-auto w-full overflow-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-            {tasks.map((task) => (
-              <Card
-                task={task}
-                OnDelete={OnDelete}
-                OnMarkAsDone={OnMarkAsDone}
-                key={task.id}
-              ></Card>
-            ))}
-          </div>
+          {tasks.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+              {tasks.map((task) => (
+                <Card
+                  task={task}
+                  OnDelete={OnDelete}
+                  OnMarkAsDone={OnMarkAsDone}
+                  key={task.id}
+                ></Card>
+              ))}
+            </div>
+          )}
+          {tasks.length <= 0 && (
+            <div className="flex h-full justify-center items-center">
+              <div>No Tasks Found</div>
+            </div>
+          )}
         </ul>
       </div>
       <AddTask isOpen={isOpen} onClose={OnPopupClose}></AddTask>
