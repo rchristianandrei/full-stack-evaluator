@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SubmitButton } from "../../components/buttons/SubmitButton";
 import { GenericInput } from "../../components/inputs/GenericInput";
+import { FullScreenLoader } from "../../components/FullScreenLoader";
 import authRepo from "../../api/authRepo";
 import { useAuth } from "../../context/AuthProvider";
 
@@ -9,6 +10,7 @@ export function Login() {
   const { setUser } = useAuth();
   const navigate = useNavigate();
 
+const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -22,6 +24,10 @@ export function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if(isLoading) return;
+    
+    setIsLoading(true)
     setErrMssg("");
 
     try {
@@ -30,38 +36,42 @@ export function Login() {
       setUser(user);
       navigate("/", { replace: true });
     } catch (err) {
+      setIsLoading(false)
       setErrMssg(err.response?.data ?? "Unavailable to login");
     }
   };
 
   return (
-    <section className="w-screen h-screen flex items-center justify-center">
-      <section className="border rounded p-10 w-150">
-        <form className="flex gap-4 flex-col" onSubmit={handleSubmit}>
-          <h1 className="text-center">Task Manager</h1>
-          <GenericInput
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required={true}
-          />
-          <GenericInput
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required={true}
-          />
-          {errMssg && <div className="text-red-400 text-center">{errMssg}</div>}
-          <SubmitButton>Login</SubmitButton>
-          <a className="text-center" href="/register">
-            Register
-          </a>
-        </form>
+    <>
+      <section className="w-screen h-screen flex items-center justify-center">
+        <section className="border rounded p-10 w-150">
+          <form className="flex gap-4 flex-col" onSubmit={handleSubmit}>
+            <h1 className="text-center">Task Manager</h1>
+            <GenericInput
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              required={true}
+            />
+            <GenericInput
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required={true}
+            />
+            {errMssg && <div className="text-red-400 text-center">{errMssg}</div>}
+            <SubmitButton>Login</SubmitButton>
+            <a className="text-center" href="/register">
+              Register
+            </a>
+          </form>
+        </section>
       </section>
-    </section>
+      <FullScreenLoader open={isLoading} message="Logging In..."></FullScreenLoader>
+    </>
   );
 }
