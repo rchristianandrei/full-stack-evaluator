@@ -6,11 +6,12 @@ import { Card } from "./Card";
 import { SearchBar } from "../../components/inputs/SearchBar";
 import { useTasks } from "../../hooks/useTasks";
 import { useConfirm } from "../../hooks/useConfirm";
+import { FullScreenLoader } from "../../components/FullScreenLoader";
 
-function Tasks(props) {
+export function Tasks(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [errMssg, setErrMssg] = useState("");
-  const { tasks, query, setQuery, fetchTasks, onMarkDone, onDelete } =
+  const { tasks, isLoading, query, setQuery, fetchTasks, onMarkDone, onDelete } =
     useTasks();
   const { confirmData, onMarkAsDone, onDeletePopup, onClose } = useConfirm();
 
@@ -25,8 +26,8 @@ function Tasks(props) {
       `Are you sure you want to mark "${taskTitle}" as done?`,
       async () => {
         await onMarkDone(taskId);
-        await fetchTasks();
         onClose();
+        await fetchTasks();
       },
       () => {
         onClose();
@@ -40,8 +41,8 @@ function Tasks(props) {
       async () => {
         try {
           await onDelete(taskId);
-          await fetchTasks(query);
           onClose();
+          await fetchTasks(query);
         } catch (err) {
           console.log(err);
         }
@@ -69,7 +70,7 @@ function Tasks(props) {
           <SearchBar query={query} onSearch={setQuery} delay={500}></SearchBar>
           <PrimaryButton onClick={() => setIsOpen(true)}>Add</PrimaryButton>
         </div>
-        <ul className="flex-1 max-w-300 mx-auto w-full overflow-auto">
+        <ul className="relative flex-1 max-w-300 mx-auto w-full overflow-auto">
           {tasks.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
               {tasks.map((task) => (
@@ -82,11 +83,12 @@ function Tasks(props) {
               ))}
             </div>
           )}
-          {tasks.length <= 0 && (
+          {tasks.length <= 0 && !isLoading && (
             <div className="flex h-full justify-center items-center">
               <div>No Tasks Found</div>
             </div>
           )}
+          <FullScreenLoader open={isLoading} message="Loading Tasks"></FullScreenLoader>
         </ul>
       </div>
       <AddTask isOpen={isOpen} onClose={OnPopupClose}></AddTask>
@@ -102,5 +104,3 @@ function Tasks(props) {
     </>
   );
 }
-
-export default Tasks;

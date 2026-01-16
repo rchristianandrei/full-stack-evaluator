@@ -4,10 +4,13 @@ import taskRepo from "../api/taskRepo";
 export function useTasks() {
   const [tasks, setTasks] = useState([]);
   const [query, setQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   async function fetchTasks() {
+    setIsLoading(true)
     const res = await taskRepo.getAllTasks(query);
     setTasks(res.data);
+    setIsLoading(false)
   }
 
   async function onMarkDone(taskId) {
@@ -20,6 +23,7 @@ export function useTasks() {
 
   return {
     tasks,
+    isLoading,
     query,
     setQuery,
     fetchTasks,

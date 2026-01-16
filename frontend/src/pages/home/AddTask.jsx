@@ -8,8 +8,10 @@ import { ModalHeader } from "../../components/modal/ModalHeader";
 import { GenericInput } from "../../components/inputs/GenericInput";
 import { SubmitButton } from "../../components/buttons/SubmitButton";
 import { toast } from "react-toastify";
+import { FullScreenLoader } from "../../components/FullScreenLoader";
 
 function AddTask(props) {
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     details: "",
@@ -22,6 +24,9 @@ function AddTask(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (isLoading) return;
+
+    setIsLoading(true);
     taskRepo
       .addTask(formData)
       .then(() => {
@@ -29,51 +34,57 @@ function AddTask(props) {
         toast.success("Successfully created task");
       })
       .catch((err) => {
-        console.log(err);
         toast.error("Add Task: " + err.message);
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
 
   return (
     <>
       {props.isOpen && (
-        <ModalContainer className="fixed inset-0 z-50 flex items-center justify-center">
-          <BackDrop onClick={() => props.onClose(false)} />
+        <>
+          <ModalContainer>
+            <BackDrop onClick={() => props.onClose(false)} />
 
-          <Modal>
-            <ModalCloseButton
-              onClick={() => props.onClose(false)}
-            ></ModalCloseButton>
+            <Modal>
+              <ModalCloseButton
+                onClick={() => props.onClose(false)}
+              ></ModalCloseButton>
 
-            <ModalHeader>Create Task Form</ModalHeader>
+              <ModalHeader>Create Task Form</ModalHeader>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <GenericInput
-                type="text"
-                name="title"
-                placeholder="Title"
-                value={formData.title}
-                onChange={handleChange}
-                className=""
-                required={true}
-              />
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <GenericInput
+                  type="text"
+                  name="title"
+                  placeholder="Title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  className=""
+                  required={true}
+                />
 
-              <textarea
-                className="w-full rounded border px-3 py-2 focus:border-blue-500 focus:outline-none resize-none"
-                name="details"
-                rows={10}
-                minLength={1}
-                maxLength={100}
-                placeholder="Details"
-                value={formData.details}
-                onChange={handleChange}
-                required
-              ></textarea>
+                <textarea
+                  className="w-full rounded border px-3 py-2 focus:border-blue-500 focus:outline-none resize-none"
+                  name="details"
+                  rows={10}
+                  minLength={1}
+                  maxLength={100}
+                  placeholder="Details"
+                  value={formData.details}
+                  onChange={handleChange}
+                  required
+                ></textarea>
 
-              <SubmitButton>Add</SubmitButton>
-            </form>
-          </Modal>
-        </ModalContainer>
+                <SubmitButton>Add</SubmitButton>
+              </form>
+            </Modal>
+          </ModalContainer>
+          <FullScreenLoader
+            open={isLoading}
+            message="Creating Task"
+          ></FullScreenLoader>
+        </>
       )}
     </>
   );

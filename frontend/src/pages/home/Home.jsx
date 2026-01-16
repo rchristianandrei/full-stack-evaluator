@@ -1,5 +1,5 @@
 import { Header } from "../../components/Header";
-import Tasks from "./Tasks";
+import { Tasks } from "./Tasks";
 
 export function Home() {
   return (
