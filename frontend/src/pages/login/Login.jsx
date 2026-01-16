@@ -30,7 +30,7 @@ export function Login() {
       setUser(user);
       navigate("/", { replace: true });
     } catch (err) {
-      setErrMssg(err.response.data);
+      setErrMssg(err.response?.data ?? "Unavailable to login");
     }
   };
 

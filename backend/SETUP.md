@@ -36,8 +36,8 @@
    package-manager-console> update-database
    ```
 
-5. Run application
+5. Run application in https
 
    ```
-   dotnet run
+   dotnet run --launch-profile https
    ```
