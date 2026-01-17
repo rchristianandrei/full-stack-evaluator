@@ -1,27 +1,28 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { ConfirmPopup } from "../../components/ConfirmPopup";
 import { useTasks } from "../../context/TasksProvider";
 import { FullScreenLoader } from "../../components/FullScreenLoader";
+import { ConfirmPopup } from "../../components/ConfirmPopup";
 
-export function DeleteTask({ deleteEvent }) {
-  const { fetchTasks, onDelete } = useTasks();
+export function DoneTask({ doneEvent }) {
+  const { fetchTasks, onMarkDone } = useTasks();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!deleteEvent) return;
+    if (!doneEvent) return;
     setIsOpen(true);
-  }, [deleteEvent]);
+  }, [doneEvent]);
 
   async function onYes() {
     setIsLoading(true);
-    await onDelete(deleteEvent.taskId);
+    await onMarkDone(doneEvent.taskId);
     setIsLoading(false);
     setIsOpen(false);
-    toast.success("Deleted Task");
+    toast.success("Task Done");
     await fetchTasks();
   }
+
   function onNo() {
     setIsOpen(false);
   }
@@ -31,8 +32,8 @@ export function DeleteTask({ deleteEvent }) {
       {isOpen && (
         <ConfirmPopup
           isOpen={isOpen}
-          title="Delete Task"
-          message={`Are you sure you want to delete "${deleteEvent.taskTitle}"?`}
+          title="Mark Task as Done"
+          message={`Are you sure you want to mark "${doneEvent.taskTitle}" as done?`}
           onYes={onYes}
           onNo={onNo}
           yesText="Delete"
@@ -41,7 +42,7 @@ export function DeleteTask({ deleteEvent }) {
       )}
       <FullScreenLoader
         open={isLoading}
-        message="Deleting Task"
+        message="Marking Task as Done"
       ></FullScreenLoader>
     </>
   );

@@ -10,7 +10,7 @@ import { SubmitButton } from "../../components/buttons/SubmitButton";
 import { toast } from "react-toastify";
 import { FullScreenLoader } from "../../components/FullScreenLoader";
 
-function AddTask(props) {
+export function AddTask(props) {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -93,5 +93,3 @@ function AddTask(props) {
     </>
   );
 }
-
-export default AddTask;

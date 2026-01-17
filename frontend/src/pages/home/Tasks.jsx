@@ -1,52 +1,25 @@
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import AddTask from "./AddTask";
-import { PrimaryButton } from "../../components/buttons/PrimaryButton";
-import { ConfirmPopup } from "../../components/ConfirmPopup";
-import { Card } from "./Card";
-import { SearchBar } from "../../components/inputs/SearchBar";
 import { useTasks } from "../../context/TasksProvider";
-import { useConfirm } from "../../hooks/useConfirm";
+import { PrimaryButton } from "../../components/buttons/PrimaryButton";
 import { FullScreenLoader } from "../../components/FullScreenLoader";
+import { SearchBar } from "../../components/inputs/SearchBar";
+import { Card } from "./Card";
+import { AddTask } from "./AddTask";
 import { DeleteTask } from "./DeleteTask";
+import { DoneTask } from "./DoneTask";
 
 export function Tasks(props) {
   const [deleteEvent, setDeleteEvent] = useState(null);
+  const [doneEvent, setDoneEvent] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState({
-    open: false,
-    message: "",
-  });
-  const {
-    tasks,
-    isLoading,
-    query,
-    setQuery,
-    fetchTasks,
-    onMarkDone,
-    onDelete,
-  } = useTasks();
-  const { confirmData, onMarkAsDone, onDeletePopup, onClose } = useConfirm();
+  const { tasks, isLoading, query, setQuery, fetchTasks } = useTasks();
 
   useEffect(() => {
     fetchTasks().catch((err) => console.log(err));
   }, [query]);
 
   function OnMarkAsDone(taskId, taskTitle) {
-    onMarkAsDone(
-      `Are you sure you want to mark "${taskTitle}" as done?`,
-      async () => {
-        setLoading({ open: true, message: "Marking as Done" });
-        await onMarkDone(taskId);
-        setLoading((data) => ({ ...data, open: false }));
-        toast.success("Task Done");
-        onClose();
-        await fetchTasks();
-      },
-      () => {
-        onClose();
-      },
-    );
+    setDoneEvent({ taskId, taskTitle });
   }
 
   function OnDelete(taskId, taskTitle) {
@@ -96,19 +69,7 @@ export function Tasks(props) {
       </div>
       <AddTask isOpen={isOpen} onClose={OnPopupClose}></AddTask>
       <DeleteTask deleteEvent={deleteEvent}></DeleteTask>
-      <ConfirmPopup
-        isOpen={confirmData.isOpen}
-        title={confirmData.title}
-        message={confirmData.message}
-        onYes={confirmData.onYes}
-        onNo={confirmData.onNo}
-        yesText={confirmData.yesText}
-        noText={confirmData.noText}
-      ></ConfirmPopup>
-      <FullScreenLoader
-        open={loading.open}
-        message={loading.message}
-      ></FullScreenLoader>
+      <DoneTask doneEvent={doneEvent}></DoneTask>
     </>
   );
 }
