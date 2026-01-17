@@ -8,8 +8,10 @@ import { SearchBar } from "../../components/inputs/SearchBar";
 import { useTasks } from "../../context/TasksProvider";
 import { useConfirm } from "../../hooks/useConfirm";
 import { FullScreenLoader } from "../../components/FullScreenLoader";
+import { DeleteTask } from "./DeleteTask";
 
 export function Tasks(props) {
+  const [deleteEvent, setDeleteEvent] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState({
     open: false,
@@ -48,24 +50,7 @@ export function Tasks(props) {
   }
 
   function OnDelete(taskId, taskTitle) {
-    onDeletePopup(
-      `Are you sure you want to delete "${taskTitle}"?`,
-      async () => {
-        try {
-          setLoading({ open: true, message: "Deleting Task" });
-          await onDelete(taskId);
-          setLoading((data) => ({ ...data, open: false }));
-          onClose();
-          toast.success("Deleted Task");
-          await fetchTasks(query);
-        } catch (err) {
-          console.log(err);
-        }
-      },
-      () => {
-        onClose();
-      },
-    );
+    setDeleteEvent({ taskId, taskTitle });
   }
 
   async function OnPopupClose(success) {
@@ -110,6 +95,7 @@ export function Tasks(props) {
         </ul>
       </div>
       <AddTask isOpen={isOpen} onClose={OnPopupClose}></AddTask>
+      <DeleteTask deleteEvent={deleteEvent}></DeleteTask>
       <ConfirmPopup
         isOpen={confirmData.isOpen}
         title={confirmData.title}
