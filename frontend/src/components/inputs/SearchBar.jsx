@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 export const SearchBar = React.memo(
-  ({ query, onSearch, delay = 500, placeholder = "Search..." }) => {
+  ({ onSearch, delay = 500, placeholder = "Search..." }) => {
     const [tempQuery, setTempQuery] = useState("");
 
     useEffect(() => {
@@ -12,8 +12,8 @@ export const SearchBar = React.memo(
       return () => clearTimeout(timer);
     }, [tempQuery]);
 
-    function handleClear(){
-      setTempQuery("")
+    function handleClear() {
+      setTempQuery("");
     }
 
     return (
@@ -57,5 +57,5 @@ export const SearchBar = React.memo(
         )}
       </div>
     );
-  }
+  },
 );

@@ -82,7 +82,7 @@ export function Tasks(props) {
         <div
           className={`flex items-center justify-between w-full max-w-300 mx-auto gap-2`}
         >
-          <SearchBar query={query} onSearch={setQuery} delay={500}></SearchBar>
+          <SearchBar onSearch={setQuery} delay={500}></SearchBar>
           <PrimaryButton onClick={() => setIsOpen(true)}>Add</PrimaryButton>
         </div>
         <ul className="relative flex-1 max-w-300 mx-auto w-full overflow-auto">
