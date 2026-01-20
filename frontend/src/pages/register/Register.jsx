@@ -4,6 +4,7 @@ import { SubmitButton } from "../../components/buttons/SubmitButton";
 import { GenericInput } from "../../components/inputs/GenericInput";
 import authRepo from "../../api/authRepo";
 import { ConfirmPopup } from "../../components/ConfirmPopup";
+import { TermsAndCondition } from "./TermsAndCondition";
 
 export function Register() {
   const navigate = useNavigate();
@@ -12,8 +13,10 @@ export function Register() {
     email: "",
     password: "",
     confirmPassword: "",
+    agree: false,
   });
   const [errMssg, setErrMssg] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
   const [confirmData, setConfirmData] = useState({
     isOpen: false,
     title: "Are you sure?",
@@ -43,6 +46,11 @@ export function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) return;
+
+    if (!formData.agree) {
+      setErrMssg("Please read and agree to the Terms and Conditions");
+      return;
+    }
     setErrMssg("");
 
     setConfirmData(() => ({
@@ -108,6 +116,27 @@ export function Register() {
               onChange={handleChange}
               required={true}
             />
+
+            <div className="flex justify-center items-center gap-2">
+              <input
+                type="checkbox"
+                id="TermsAndCondition"
+                name="agree"
+                value={formData.agree}
+                onChange={handleChange}
+              />
+              <label htmlFor="TermsAndCondition">I agree to the</label>
+              <strong
+                className="pointer-events-auto underline cursor-pointer"
+                onClick={() => setIsOpen(true)}
+              >
+                Terms and Conditions
+              </strong>
+            </div>
+            <TermsAndCondition
+              open={isOpen}
+              onClose={() => setIsOpen(false)}
+            ></TermsAndCondition>
             {errMssg && (
               <div className="text-red-400 text-center">{errMssg}</div>
             )}
